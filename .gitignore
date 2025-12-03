@@ -1,0 +1,68 @@
+############################
+#  Global IDE Settings
+############################
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# VS Code
+.vscode/
+
+# Mac system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+
+############################
+#  Backend (Spring Boot)
+############################
+
+# Maven target directory
+backend/target/
+
+# Logs
+backend/*.log
+backend/**/logs/
+
+# Spring Boot specific ignores
+backend/*.jar
+backend/*.war
+
+# Environment variables
+backend/.env
+
+############################
+#  Frontend (React + Vite)
+############################
+
+# Node modules
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+
+# Local environment files
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+############################
+#  General
+############################
+
+# Temporary files
+*.tmp
+*.temp
+
+# NPM debug log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Lock files (optional)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
