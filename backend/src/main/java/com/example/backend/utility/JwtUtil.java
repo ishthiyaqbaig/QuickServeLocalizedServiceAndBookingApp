@@ -36,6 +36,15 @@ public class JwtUtil {
         return getClaims(token).get("role", String.class);
     }
 
+    public boolean isTokenValid(String token) {
+        try {
+            Claims claims = getClaims(token);
+            return !claims.getExpiration().before(new Date());
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
     private Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)

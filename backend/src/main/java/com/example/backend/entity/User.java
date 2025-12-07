@@ -7,6 +7,8 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+
+
 @Entity
 @Table(name = "users")
 @Data
@@ -31,6 +33,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private Double permanentLatitude;
+    private Double permanentLongitude;
+    private String permanentAddress;
+
     private LocalDateTime createdAt;
 
     @PrePersist
@@ -39,4 +45,5 @@ public class User {
     }
 
 }
+
 

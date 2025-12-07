@@ -1,11 +1,17 @@
 package com.example.backend.dto;
 
 import com.example.backend.enums.Role;
+import lombok.Data;
 
+@Data
 public class SignupRequest {
-    public String userName;
-    public String email;
-    public String password;
-    public String confirmPassword;
-    public Role role;
+    private String userName;
+    private String email;
+    private String password;
+    private String confirmPassword;
+    private Role role;
+    private Double latitude;    // Optional manual location
+    private Double longitude;   // Optional manual location
+    private String address;     // Optional address
 }
+
