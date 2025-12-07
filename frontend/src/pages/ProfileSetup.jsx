@@ -22,6 +22,7 @@ export default function ProfileSetup() {
     const [location, setLocation] = useState({ address: '', city: '', state: '', pincode: '' })
     const [profileImage, setProfileImage] = useState(null)
     const [previewUrl, setPreviewUrl] = useState(null)
+    const [apiError, setApiError] = useState('')
 
     const user = {
         name: localStorage.getItem('userName') || 'Provider',
@@ -52,19 +53,26 @@ export default function ProfileSetup() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
+        setApiError('')
+
         const profileData = {
             services: selectedServices,
             bio,
             experience,
             location,
-            profileImage: previewUrl // Storing URL for mock purposes
+            profileImage: previewUrl // In a real app, this would be a file upload to S3/Cloudinary first
         }
-        console.log('Profile Setup:', profileData)
 
-        // Mock saving profile data
-        localStorage.setItem('providerProfile', JSON.stringify(profileData))
-
-        navigate('/provider/dashboard')
+        updateProfile(profileData)
+            .then(() => {
+                console.log('Profile setup successful')
+                localStorage.setItem('providerProfile', JSON.stringify(profileData))
+                navigate('/provider/dashboard')
+            })
+            .catch((error) => {
+                console.error('Profile setup failed:', error)
+                setApiError(error.response?.data?.message || 'Failed to save profile. Please try again.')
+            })
     }
 
     return (
@@ -78,6 +86,11 @@ export default function ProfileSetup() {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-8">
+                        {apiError && (
+                            <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm text-center">
+                                {apiError}
+                            </div>
+                        )}
                         {/* Profile Image */}
                         <div className="flex flex-col items-center gap-4">
                             <div className="w-32 h-32 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden relative group">
@@ -223,4 +236,3 @@ export default function ProfileSetup() {
         </div>
     )
 }
-

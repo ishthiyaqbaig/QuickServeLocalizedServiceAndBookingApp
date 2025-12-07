@@ -5,6 +5,8 @@ import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
 import { Navbar } from '../components/layout/Navbar'
 
+import { register } from '../services/authService'
+
 export default function SignUp() {
     const navigate = useNavigate()
     const [role, setRole] = useState('CUSTOMER') // 'CUSTOMER' | 'PROVIDER'
@@ -17,6 +19,7 @@ export default function SignUp() {
     })
 
     const [errors, setErrors] = useState({})
+    const [apiError, setApiError] = useState('')
 
     const validateForm = () => {
         const newErrors = {}
@@ -63,23 +66,37 @@ export default function SignUp() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
+        setApiError('')
 
         if (!validateForm()) {
             return
         }
 
-        // Mock registration logic
-        console.log('Registering as:', role, formData)
-
-        // Store role in local storage for demo purposes
-        localStorage.setItem('userRole', role)
-        localStorage.setItem('userName', formData.name)
-
-        if (role === 'PROVIDER') {
-            navigate('/profile-setup')
-        } else {
-            navigate('/')
+        const userData = {
+            ...formData,
+            role
         }
+
+        register(userData)
+            .then((data) => {
+                console.log('Registration successful:', data)
+                // Assuming the backend returns a token or user object
+                if (data.token) {
+                    localStorage.setItem('authToken', data.token)
+                }
+                localStorage.setItem('userRole', role)
+                localStorage.setItem('userName', formData.name)
+
+                if (role === 'PROVIDER') {
+                    navigate('/profile-setup')
+                } else {
+                    navigate('/')
+                }
+            })
+            .catch((error) => {
+                console.error('Registration failed:', error)
+                setApiError(error.response?.data?.message || 'Registration failed. Please try again.')
+            })
     }
 
     return (
@@ -93,6 +110,11 @@ export default function SignUp() {
                     </div>
 
                     <form className="mt-8 space-y-6" onSubmit={handleSubmit} noValidate>
+                        {apiError && (
+                            <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm text-center">
+                                {apiError}
+                            </div>
+                        )}
                         {/* Role Selection */}
                         <div className="grid grid-cols-2 gap-4">
                             <div

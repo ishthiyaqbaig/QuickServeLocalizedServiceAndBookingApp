@@ -2,19 +2,21 @@ import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
-
 import { MOCK_USERS } from '../data/mockData'
-
 import { Navbar } from '../components/layout/Navbar'
+import { Select } from '../components/ui/Select'
+import { login } from '../services/authService'
 
 export default function Login() {
     const navigate = useNavigate()
+    const [role, setRole] = useState('CUSTOMER')
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     })
 
     const [errors, setErrors] = useState({})
+    const [apiError, setApiError] = useState('')
 
     const validateForm = () => {
         const newErrors = {}
@@ -38,24 +40,37 @@ export default function Login() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
+        setApiError('')
 
         if (!validateForm()) {
             return
         }
 
-        console.log('Logging in:', formData)
-
-        // Mock login logic based on email
-        if (formData.email === MOCK_USERS.provider.email) {
-            localStorage.setItem('userRole', 'PROVIDER')
-            localStorage.setItem('userName', MOCK_USERS.provider.name)
-            navigate('/provider/dashboard')
-        } else {
-            // Default to customer for any other email (including alex.j@example.com)
-            localStorage.setItem('userRole', 'CUSTOMER')
-            localStorage.setItem('userName', MOCK_USERS.customer.name)
-            navigate('/customer/dashboard')
+        const loginData = {
+            ...formData,
+            role
         }
+
+        login(loginData)
+            .then((data) => {
+                console.log('Login successful:', data)
+                if (data.token) {
+                    localStorage.setItem('authToken', data.token)
+                }
+                localStorage.setItem('userRole', role)
+                // Assuming response contains user name
+                localStorage.setItem('userName', data.name || 'User')
+
+                if (role === 'PROVIDER') {
+                    navigate('/provider/dashboard')
+                } else {
+                    navigate('/customer/dashboard')
+                }
+            })
+            .catch((error) => {
+                console.error('Login failed:', error)
+                setApiError(error.response?.data?.message || 'Login failed. Please check your credentials.')
+            })
     }
 
     return (
@@ -64,13 +79,26 @@ export default function Login() {
             <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
                     <div className="text-center">
-                        
                         <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
                         <p className="mt-2 text-gray-600">Sign in to your account</p>
                     </div>
 
                     <form className="mt-8 space-y-6" onSubmit={handleSubmit} noValidate>
+                        {apiError && (
+                            <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm text-center">
+                                {apiError}
+                            </div>
+                        )}
                         <div className="space-y-4">
+                            <Select
+                                label="I am a"
+                                options={[
+                                    { value: 'CUSTOMER', label: 'Customer' },
+                                    { value: 'PROVIDER', label: 'Service Provider' }
+                                ]}
+                                value={role}
+                                onChange={(e) => setRole(e.target.value)}
+                            />
                             <Input
                                 label="Email Address"
                                 type="email"
@@ -142,7 +170,7 @@ export default function Login() {
                         </div>
 
                         <div className="text-center text-sm text-gray-600">
-                            Don't have an account?{' '}
+                            Don&apos;t have an account?{' '}
                             <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500">
                                 Sign up
                             </Link>
