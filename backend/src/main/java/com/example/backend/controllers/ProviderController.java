@@ -18,13 +18,13 @@ public class ProviderController {
     private final ListingService listingService;
     private final SearchService searchService;
 
-    // ✅ Test endpoint
+    //  Test endpoint
     @GetMapping("/test")
     public ResponseEntity<String> test() {
         return ResponseEntity.ok("Provider endpoint working!");
     }
 
-    // ✅ CREATE LISTING WITH CLOUDINARY IMAGE
+    //  CREATE LISTING WITH CLOUDINARY IMAGE
     @PostMapping("/{providerId}/listings")
     public ResponseEntity<Listing> createListing(
             @PathVariable Long providerId,
@@ -34,7 +34,7 @@ public class ProviderController {
         return ResponseEntity.ok(listing);
     }
 
-    // ✅ SEARCH NEAREST PROVIDERS
+    //  SEARCH NEAREST PROVIDERS
     @GetMapping("/search")
     public ResponseEntity<List<Listing>> searchNearest(
             @RequestParam Double lat,
