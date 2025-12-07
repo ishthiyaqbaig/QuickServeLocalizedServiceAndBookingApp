@@ -1,7 +1,10 @@
-
 import { Link } from 'react-router-dom'
-import { Search, MapPin, Star, ArrowRight, Wrench, Zap, Home, BookOpen, Truck, Scissors } from 'lucide-react'
+import { Search, MapPin, Star, ArrowRight, Wrench, Zap, Home, BookOpen, Truck, Scissors, Instagram, Linkedin, Twitter } from 'lucide-react'
 import { Button } from '../components/ui/Button'
+import { Input } from '../components/ui/Input'
+import banner from "../assets/hero-banner.png";
+import services from "../assets/home_services_illustration.png";
+import { Navbar } from '../components/layout/Navbar';
 
 const CATEGORIES = [
     { id: 'plumbing', label: 'Plumbing', icon: Wrench, color: 'bg-blue-100 text-blue-600' },
@@ -16,32 +19,14 @@ export default function LandingPage() {
     return (
         <div className="min-h-screen bg-white">
             {/* Navigation */}
-            <nav className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16 items-center">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                                <MapPin className="text-white w-5 h-5" />
-                            </div>
-                            <span className="text-xl font-bold text-gray-900">Quick Serve</span>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <Link to="/login">
-                                <Button variant="secondary" className="bg-transparent hover:bg-gray-100">Log In</Button>
-                            </Link>
-                            <Link to="/signup">
-                                <Button>Sign Up</Button>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+            {/* Navigation */}
+            <Navbar />
 
             {/* Hero Section */}
             <div className="relative bg-gray-900 text-white overflow-hidden">
                 <div className="absolute inset-0">
                     <img
-                        src="/landing_hero_banner.png"
+                        src={banner}
                         alt="Local Services"
                         className="w-full h-full object-cover opacity-40"
                     />
@@ -75,7 +60,7 @@ export default function LandingPage() {
                                     className="w-full pl-10 pr-4 py-3 rounded-lg text-gray-900 focus:outline-none"
                                 />
                             </div>
-                            <Button className="py-3 px-8 text-lg">
+                            <Button className="mt-1 py-5 px-8 text-lg">
                                 Search
                             </Button>
                         </div>
@@ -138,14 +123,18 @@ export default function LandingPage() {
                             </div>
                             <div className="mt-8">
                                 <Link to="/signup">
-                                    <Button className="flex items-center gap-2">
+                                    <Button className="px-4 py-3">
                                         Get Started <ArrowRight size={16} />
                                     </Button>
                                 </Link>
                             </div>
                         </div>
                         <div className="bg-gray-100 rounded-2xl p-8 h-96 flex items-center justify-center">
-                            <span className="text-gray-400">Feature Image Placeholder</span>
+                            <img
+                                src={services}
+                                alt="Local Services"
+                                className="w-full h-full object-cover rounded-2xl"
+                            />
                         </div>
                     </div>
                 </div>
@@ -183,10 +172,15 @@ export default function LandingPage() {
                         <div>
                             <h4 className="text-white font-semibold mb-4">Follow Us</h4>
                             <div className="flex gap-4">
-                                {/* Social icons placeholder */}
-                                <div className="w-8 h-8 bg-gray-800 rounded-full"></div>
-                                <div className="w-8 h-8 bg-gray-800 rounded-full"></div>
-                                <div className="w-8 h-8 bg-gray-800 rounded-full"></div>
+                                <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
+                                    <Instagram className="w-5 h-5 text-white" />
+                                </a>
+                                <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
+                                    <Twitter className="w-5 h-5 text-white" />
+                                </a>
+                                <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
+                                    <Linkedin className="w-5 h-5 text-white" />
+                                </a>
                             </div>
                         </div>
                     </div>
