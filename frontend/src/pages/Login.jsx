@@ -56,15 +56,17 @@ export default function Login() {
                 console.log('Login successful:', data)
                 if (data.token) {
                     localStorage.setItem('authToken', data.token)
+                    localStorage.setItem('userId', data.userId)
                 }
                 localStorage.setItem('userRole', role)
-                // Assuming response contains user name
-                localStorage.setItem('userName', data.name || 'User')
+                // Assuming response contains user name, if not stored from previous session or API doesn't return it, we might check how getting user details works. 
+                // For now, let's keep it simple or remove if undefined.
+                // localStorage.setItem('userName', data.name || 'User') 
 
                 if (role === 'PROVIDER') {
-                    navigate('/provider/dashboard')
+                    navigate('/provider/create-listing')
                 } else {
-                    navigate('/customer/dashboard')
+                    navigate('/customer/search')
                 }
             })
             .catch((error) => {
