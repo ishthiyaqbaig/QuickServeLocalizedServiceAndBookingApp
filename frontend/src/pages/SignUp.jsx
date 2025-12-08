@@ -11,9 +11,8 @@ export default function SignUp() {
     const navigate = useNavigate()
     const [role, setRole] = useState('CUSTOMER') // 'CUSTOMER' | 'PROVIDER'
     const [formData, setFormData] = useState({
-        name: '',
+        userName: '',
         email: '',
-        mobile: '',
         password: '',
         confirmPassword: ''
     })
@@ -25,10 +24,10 @@ export default function SignUp() {
         const newErrors = {}
 
         // Name validation
-        if (!formData.name.trim()) {
-            newErrors.name = 'Full Name is required'
-        } else if (formData.name.length < 2) {
-            newErrors.name = 'Name must be at least 2 characters'
+        if (!formData.userName.trim()) {
+            newErrors.userName = 'Username is required'
+        } else if (formData.userName.length < 2) {
+            newErrors.userName = 'Username must be at least 2 characters'
         }
 
         // Email validation
@@ -37,14 +36,6 @@ export default function SignUp() {
             newErrors.email = 'Email is required'
         } else if (!emailRegex.test(formData.email)) {
             newErrors.email = 'Invalid email format'
-        }
-
-        // Mobile validation
-        const mobileRegex = /^\d{10}$/
-        if (!formData.mobile) {
-            newErrors.mobile = 'Mobile number is required'
-        } else if (!mobileRegex.test(formData.mobile)) {
-            newErrors.mobile = 'Mobile number must be exactly 10 digits'
         }
 
         // Password validation
@@ -80,17 +71,18 @@ export default function SignUp() {
         register(userData)
             .then((data) => {
                 console.log('Registration successful:', data)
-                // Assuming the backend returns a token or user object
                 if (data.token) {
                     localStorage.setItem('authToken', data.token)
+                    localStorage.setItem('userId', data.userId)
                 }
                 localStorage.setItem('userRole', role)
-                localStorage.setItem('userName', formData.name)
+                localStorage.setItem('userName', formData.userName)
 
                 if (role === 'PROVIDER') {
-                    navigate('/profile-setup')
+                    // Navigate to create listing (formerly profile setup)
+                    navigate('/provider/create-listing')
                 } else {
-                    navigate('/')
+                    navigate('/customer/search')
                 }
             })
             .catch((error) => {
@@ -144,13 +136,13 @@ export default function SignUp() {
 
                         <div className="space-y-4">
                             <Input
-                                label="Full Name"
+                                label="Username"
                                 type="text"
                                 required
-                                placeholder="John Doe"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                error={errors.name}
+                                placeholder="Rahul"
+                                value={formData.userName}
+                                onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
+                                error={errors.userName}
                             />
                             <Input
                                 label="Email Address"
@@ -160,21 +152,6 @@ export default function SignUp() {
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 error={errors.email}
-                            />
-                            <Input
-                                label="Mobile Number"
-                                type="tel"
-                                required
-                                placeholder="1234567890"
-                                value={formData.mobile}
-                                onChange={(e) => {
-                                    // Only allow numeric input
-                                    const value = e.target.value.replace(/\D/g, '')
-                                    if (value.length <= 10) {
-                                        setFormData({ ...formData, mobile: value })
-                                    }
-                                }}
-                                error={errors.mobile}
                             />
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
