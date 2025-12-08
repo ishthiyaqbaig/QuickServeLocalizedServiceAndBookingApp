@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { jwtDecode } from "jwt-decode";
 import { useNavigate, Link } from 'react-router-dom'
 import { User, Briefcase, CheckCircle2 } from 'lucide-react'
 import { Button } from '../components/ui/Button'
@@ -70,20 +71,28 @@ export default function SignUp() {
 
         register(userData)
             .then((data) => {
-                console.log('Registration successful:', data)
-                if (data.token) {
-                    localStorage.setItem('authToken', data.token)
-                    localStorage.setItem('userId', data.userId)
-                }
-                localStorage.setItem('userRole', role)
-                localStorage.setItem('userName', formData.userName)
+               console.log('Registration successful:', data)
 
-                if (role === 'PROVIDER') {
-                    // Navigate to create listing (formerly profile setup)
-                    navigate('/provider/create-listing')
-                } else {
-                    navigate('/customer/search')
-                }
+    if (data.token) {
+        localStorage.setItem('authToken', data.token)
+
+        // ✅ Decode token to get ID & role
+        const decoded = jwtDecode(data.token)
+
+        const userId = decoded.userId
+        const userRole = decoded.role
+
+        localStorage.setItem('userId', userId)
+        localStorage.setItem('userRole', userRole)
+    }
+
+    localStorage.setItem('userName', formData.userName)
+
+    if (role === 'SERVICE_PROVIDER') {
+        navigate('/provider/create-listing')
+    } else {
+        navigate('/customer/search')
+    }
             })
             .catch((error) => {
                 console.error('Registration failed:', error)
@@ -122,7 +131,7 @@ export default function SignUp() {
                             </div>
 
                             <div
-                                onClick={() => setRole('PROVIDER')}
+                                onClick={() => setRole('SERVICE_PROVIDER')}
                                 className={`cursor-pointer p-4 border-2 rounded-xl flex flex-col items-center gap-2 transition-all ${role === 'PROVIDER'
                                     ? 'border-blue-600 bg-blue-50 text-blue-700'
                                     : 'border-gray-200 hover:border-blue-200'
@@ -130,7 +139,7 @@ export default function SignUp() {
                             >
                                 <Briefcase size={32} />
                                 <span className="font-semibold">Provider</span>
-                                {role === 'PROVIDER' && <CheckCircle2 size={20} className="text-blue-600" />}
+                                {role === 'SERVICE_PROVIDER' && <CheckCircle2 size={20} className="text-blue-600" />}
                             </div>
                         </div>
 

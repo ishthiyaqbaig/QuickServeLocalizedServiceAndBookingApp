@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Upload, MapPin } from 'lucide-react'
 import { Button } from '../components/ui/Button'
@@ -90,7 +90,7 @@ export default function CreateListing() {
 
             await createListing(providerId, data)
             alert('Listing created successfully!')
-            // navigate('/provider/dashboard') // or wherever
+            navigate('/provider/dashboard') 
         } catch (error) {
             console.error('Failed to create listing', error)
             alert('Failed to create listing')
