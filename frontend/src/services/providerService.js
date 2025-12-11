@@ -11,7 +11,7 @@ export const createListing = async (providerId, formData) => {
 }
 
 export const searchProviders = async (lat, lng, categoryId) => {
-    const response = await apiClient.get(`/provider/search`, {
+    const response = await apiClient.get(`/search`, {
         params: { lat, lng, categoryId }
     })
     return response.data

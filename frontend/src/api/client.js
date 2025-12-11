@@ -1,40 +1,48 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-    baseURL: 'http://localhost:8080/api', // Spring Boot backend URL
-    headers: {
-        'Content-Type': 'application/json'
-    }
-})
+    baseURL: 'http://localhost:8080/api',  // Spring Boot backend
+});
 
-// Add a request interceptor to attach the token
+//  Add a request interceptor to attach token
 apiClient.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('authToken')
+        const token = localStorage.getItem('authToken');
+
         if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`
+            config.headers['Authorization'] = `Bearer ${token}`;
         }
-        return config
-    },
-    (error) => {
-        return Promise.reject(error)
-    }
-)
 
-// Add a response interceptor for global error handling
+        // If data is FormData, remove default JSON header
+        if (config.data instanceof FormData) {
+            delete config.headers['Content-Type'];
+        }
+
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
+//  Global error handling (Unauthorized, Forbidden, etc.)
 apiClient.interceptors.response.use(
-    (response) => {
-        return response
-    },
+    (response) => response,
     (error) => {
-        // Handle global errors like 401 Unauthorized
-        if (error.response && error.response.status === 401) {
-            // Optional: Redirect to login or clear storage
-            // localStorage.clear()
-            // window.location.href = '/login'
-        }
-        return Promise.reject(error)
-    }
-)
+        if (error.response) {
+            if (error.response.status === 401) {
+                console.warn("⚠️ Token expired or invalid.");
 
-export default apiClient
+                // Optional auto-logout:
+                // localStorage.clear();
+                // window.location.href = "/login";
+            }
+
+            if (error.response.status === 403) {
+                console.warn("🚫 Access denied: Forbidden API call.");
+            }
+        }
+
+        return Promise.reject(error);
+    }
+);
+
+export default apiClient;
