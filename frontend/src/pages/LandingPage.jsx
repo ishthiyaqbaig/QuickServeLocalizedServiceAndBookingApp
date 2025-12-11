@@ -3,6 +3,9 @@ import { Search, MapPin, Star, ArrowRight, Wrench, Zap, Home, BookOpen, Truck, S
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
 import banner from "../assets/hero-banner.png";
+import appScreenshots from "../assets/img/app-screenshots.png";
+import playStore from "../assets/img/google.png";
+import appStore from "../assets/img/Apple.png";
 import services from "../assets/home_services_illustration.png";
 import { Navbar } from '../components/layout/Navbar';
 
@@ -91,6 +94,44 @@ export default function LandingPage() {
                                 </div>
                             )
                         })}
+                    </div>
+                </div>
+            </div>
+            
+            {/* Download on Android/ios Section */}
+            <div className='py-20'>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <div class="text-center">
+                                <img
+                                    src={appScreenshots}
+                                    alt="App Screenshots"
+                                    className="max-w-80% align-middle"
+                                />
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <h2 class="mb-12 mt-0 font-medium leading-snug text-[calc(1.325rem+.9vw)]">Find best offers in your area</h2>
+                            <p class="text-gray-600 mb-6 mt-0">Manage your offers, customers, and success from your phone - anywhere, anytime. Designed to be simple, elegant, and powerful for todays multitasking platform.</p>
+                            <p class="text-gray-600 mb-6 mt-0">Download on Android/ios.</p>
+                            <div class="flex mb-6 image-shadow app-link">
+                                <a href="#" target="_blank" class="mr-4">                                    
+                                    <img
+                                        src={playStore}
+                                        alt="Play Store"
+                                        className="w-[180px] align-middle object-contain"
+                                    />
+                                </a>
+                                <a href="#" target="_blank" class="">                                    
+                                    <img
+                                        src={appStore}
+                                        alt="App Store"
+                                        className="w-[180px] align-middle object-contain"
+                                    />
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
