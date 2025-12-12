@@ -8,6 +8,8 @@ import playStore from "../assets/img/google.png";
 import appStore from "../assets/img/Apple.png";
 import services from "../assets/home_services_illustration.png";
 import { Navbar } from '../components/layout/Navbar';
+import OfflineStruggleSection from '../components/layout/OfflineStruggleSection';
+import SmartFeaturesSection from '../components/layout/SmartFeaturesSection';
 
 const CATEGORIES = [
     { id: 'plumbing', label: 'Plumbing', icon: Wrench, color: 'bg-blue-100 text-blue-600' },
@@ -98,6 +100,9 @@ export default function LandingPage() {
                 </div>
             </div>
             
+            {/* Smart Features Section */}
+            <SmartFeaturesSection/>
+
             {/* Download on Android/ios Section */}
             <div className='py-20'>
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -135,6 +140,9 @@ export default function LandingPage() {
                     </div>
                 </div>
             </div>
+
+            {/*  */}
+            <OfflineStruggleSection/>
 
             {/* Features / How it works */}
             <div className="py-20">
