@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 
 @Data
-public class CreateListingRequest {
+public class UpdateListingRequest {
 
     private Long categoryId;
     private String title;

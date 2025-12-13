@@ -1,5 +1,8 @@
 package com.example.backend.dto;
 
+import lombok.Data;
+
+@Data
 public class AuthResponse {
 
     private String token;
@@ -8,14 +11,6 @@ public class AuthResponse {
     public AuthResponse(String token, String role) {
         this.token = token;
         this.role = role;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public String getRole() {
-        return role;
     }
 }
 

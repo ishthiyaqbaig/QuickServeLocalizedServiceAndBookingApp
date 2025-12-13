@@ -44,18 +44,9 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
 
-        // Set location if provided
-        if (request.getLatitude() != null && request.getLongitude() != null) {
-            user.setPermanentLatitude(request.getLatitude());
-            user.setPermanentLongitude(request.getLongitude());
-        }
-        if (request.getAddress() != null) {
-            user.setPermanentAddress(request.getAddress());
-        }
-
         userRepository.save(user);
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+        String token = jwtUtil.generateToken(user.getId(),user.getEmail(), user.getRole().name());
         return new AuthResponse(token, user.getRole().name());
     }
 
@@ -67,7 +58,7 @@ public class UserService {
             throw new RuntimeException("Invalid password");
         }
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+        String token = jwtUtil.generateToken(user.getId(),user.getEmail(), user.getRole().name());
         return new AuthResponse(token, user.getRole().name());
     }
 }

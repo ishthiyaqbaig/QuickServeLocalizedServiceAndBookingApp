@@ -29,4 +29,5 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
             @Param("lng") Double lng,
             @Param("categoryId") Long categoryId
     );
+    List<Listing> findByProviderId(Long providerId);
 }

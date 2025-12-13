@@ -20,10 +20,12 @@ public class Listing {
     private Long categoryId;
 
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private BigDecimal price;
 
+    @Column(columnDefinition = "TEXT")
     private String images; // Cloudinary URL
 
     private Boolean isApproved = false;
