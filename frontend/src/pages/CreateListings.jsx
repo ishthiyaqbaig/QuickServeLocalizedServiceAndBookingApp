@@ -30,13 +30,19 @@ export default function CreateListing() {
     useEffect(() => {
         getCategories()
             .then((data) => {
-                setCategories(data)
+                const normalized = Array.isArray(data) ? data : []
+                setCategories(normalized)
 
                 // set first category by default
-                if (data.length > 0) {
+                if (normalized.length > 0) {
                     setFormData((prev) => ({
                         ...prev,
-                        categoryId: data[0].id,
+                        categoryId: normalized[0].id,
+                    }))
+                } else {
+                    setFormData((prev) => ({
+                        ...prev,
+                        categoryId: '',
                     }))
                 }
             })
@@ -91,10 +97,17 @@ export default function CreateListing() {
             form.append('title', formData.title)
             form.append('description', formData.description)
             form.append('price', formData.price)
-            form.append('categoryId', formData.categoryId)
-            form.append('permanentLatitude', formData.permanentLatitude)
-            form.append('permanentLongitude', formData.permanentLongitude)
-            form.append('permanentAddress', formData.permanentAddress)
+
+            // Only submit categoryId when categories exist and a value is selected.
+            // This allows listing creation even when the dropdown is empty.
+            if (categories.length > 0 && formData.categoryId) {
+                form.append('categoryId', formData.categoryId)
+            }
+
+            // Only append location if fetched; prevent sending empty strings for doubles
+            if (formData.permanentLatitude) form.append('permanentLatitude', formData.permanentLatitude)
+            if (formData.permanentLongitude) form.append('permanentLongitude', formData.permanentLongitude)
+            if (formData.permanentAddress) form.append('permanentAddress', formData.permanentAddress)
 
             if (file) form.append('image', file)
 
@@ -104,7 +117,8 @@ export default function CreateListing() {
             navigate('/provider/dashboard')
         } catch (error) {
             console.error('Failed to create listing:', error)
-            alert('Failed to create listing')
+            const msg = error.response?.data?.message || 'Failed to create listing'
+            alert(msg)
         } finally {
             setLoading(false)
         }
@@ -159,12 +173,17 @@ export default function CreateListing() {
                         {/* Category (DYNAMIC) */}
                         <Select
                             label="Category"
-                            options={categories.map((c) => ({
+                            options={
+                                categories.length > 0
+                                    ? categories.map((c) => ({
                                 value: c.id,
                                 label: c.name,
-                            }))}
-                            value={formData.categoryId}
+                                    }))
+                                    : [{ value: '', label: 'No categories available' }]
+                            }
+                            value={categories.length > 0 ? formData.categoryId : ''}
                             onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+                            disabled={categories.length === 0}
                         />
 
                         {/* Description */}

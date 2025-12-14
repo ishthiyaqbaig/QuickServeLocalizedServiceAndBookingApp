@@ -56,49 +56,77 @@ export default function SignUp() {
         return Object.keys(newErrors).length === 0
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        setApiError('')
+    // const handleSubmit = (e) => {
+    //     e.preventDefault()
+    //     setApiError('')
 
-        if (!validateForm()) {
-            return
+    //     if (!validateForm()) {
+    //         return
+    //     }
+
+    //     const userData = {
+    //         ...formData,
+    //         role
+    //     }
+
+    //     register(userData)
+    //         .then((data) => {
+    //             console.log('Registration successful:', data)
+
+    //             if (data.token) {
+    //                 localStorage.setItem('authToken', data.token)
+
+    //                 // ✅ Decode token to get ID & role
+    //                 const decoded = jwtDecode(data.token)
+
+    //                 const userId = decoded.userId
+    //                 const userRole = decoded.role
+
+    //                 localStorage.setItem('userId', userId)
+    //                 localStorage.setItem('userRole', userRole)
+    //             }
+
+    //             localStorage.setItem('userName', formData.userName)
+
+    //             if (role === 'SERVICE_PROVIDER') {
+    //                 navigate('/provider/profile')
+    //             } else {
+    //                 navigate('/customer/search')
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.error('Registration failed:', error)
+    //             setApiError(error.response?.data?.message || 'Registration failed. Please try again.')
+    //         })
+    // }
+        const handleSubmit = (e) => {
+            e.preventDefault()
+            setApiError('')
+
+            if (!validateForm()) return
+
+            // 🔥 DUMMY USER DATA (NO BACKEND)
+            const dummyUser = {
+                userId: 1,
+                providerId: 1,
+                role: role,
+                userName: formData.userName || 'Demo User'
+            }
+
+            // ✅ Store fake auth data
+            localStorage.setItem('authToken', 'dummy-token-dev')
+            localStorage.setItem('userId', dummyUser.userId)
+            localStorage.setItem('userRole', dummyUser.role)
+            localStorage.setItem('userName', dummyUser.userName)
+
+            if (role === 'SERVICE_PROVIDER') {
+                localStorage.setItem('providerId', dummyUser.providerId)
+                navigate('/provider/profile')
+            } else {
+                navigate('/customer/search')
+            }
         }
 
-        const userData = {
-            ...formData,
-            role
-        }
-
-        register(userData)
-            .then((data) => {
-               console.log('Registration successful:', data)
-
-    if (data.token) {
-        localStorage.setItem('authToken', data.token)
-
-        // ✅ Decode token to get ID & role
-        const decoded = jwtDecode(data.token)
-
-        const userId = decoded.userId
-        const userRole = decoded.role
-
-        localStorage.setItem('userId', userId)
-        localStorage.setItem('userRole', userRole)
-    }
-
-    localStorage.setItem('userName', formData.userName)
-
-    if (role === 'SERVICE_PROVIDER') {
-        navigate('/provider/create-listing')
-    } else {
-        navigate('/customer/search')
-    }
-            })
-            .catch((error) => {
-                console.error('Registration failed:', error)
-                setApiError(error.response?.data?.message || 'Registration failed. Please try again.')
-            })
-    }
 
     return (
         <div className="min-h-screen bg-gray-50">

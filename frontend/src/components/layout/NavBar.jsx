@@ -5,7 +5,7 @@ import { Button } from '../ui/Button';
 
 export const Navbar = ({ showAuthButtons = true, user, onLogout }) => {
     const logoLink = user
-        ? (user.role === 'PROVIDER' ? '/provider/dashboard' : '/customer/dashboard')
+        ? (user.role === 'SERVICE_PROVIDER' ? '/provider/dashboard' : '/customer/dashboard')
         : '/';
 
     return (
@@ -21,7 +21,7 @@ export const Navbar = ({ showAuthButtons = true, user, onLogout }) => {
 
                     {user ? (
                         <div className="flex items-center gap-4">
-                            <Link to={user.role === 'PROVIDER' ? '/provider/profile' : '/customer/profile'}>
+                            <Link to={user.role === 'SERVICE_PROVIDER' ? '/provider/profile' : '/customer/profile'}>
                                 <Button variant="ghost" className="flex items-center gap-2">
                                     <User size={20} />
                                     Profile
@@ -52,5 +52,3 @@ Navbar.propTypes = {
     user: PropTypes.object,
     onLogout: PropTypes.func,
 };
-
-

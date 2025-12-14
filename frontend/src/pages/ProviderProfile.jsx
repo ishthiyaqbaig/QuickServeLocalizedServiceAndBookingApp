@@ -1,131 +1,196 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { User, Mail, Phone, Star, ArrowLeft, Briefcase } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { User, Mail, Phone, MapPin, Camera, Save, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { MOCK_USERS, MOCK_SERVICES } from '../data/mockData';
+import { Input } from '../components/ui/Input';
+import { Navbar } from '../components/layout/Navbar';
 
 const ProviderProfile = () => {
-    const user = MOCK_USERS.provider;
-    const services = MOCK_SERVICES.filter(s => s.providerId === user.id);
+    const navigate = useNavigate();
+    const [isEditing, setIsEditing] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    // Initial state from localStorage or defaults
+    const [profile, setProfile] = useState({
+        name: localStorage.getItem('userName') || 'Provider',
+        email: localStorage.getItem('userEmail') || 'provider@example.com',
+        mobile: localStorage.getItem('userMobile') || '',
+        bio: localStorage.getItem('userBio') || '',
+        location: localStorage.getItem('userLocation') || '',
+        profileImage: localStorage.getItem('userProfileImage') || null
+    });
+
+    const user = {
+        name: profile.name,
+        role: 'SERVICE_PROVIDER'
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setProfile(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Create local preview URL
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfile(prev => ({
+                    ...prev,
+                    profileImage: reader.result
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSave = () => {
+        setLoading(true);
+        // Simulator API call / Persistence to LocalStorage
+        setTimeout(() => {
+            localStorage.setItem('userName', profile.name);
+            localStorage.setItem('userEmail', profile.email);
+            localStorage.setItem('userMobile', profile.mobile);
+            localStorage.setItem('userBio', profile.bio);
+            localStorage.setItem('userLocation', profile.location);
+            if (profile.profileImage) {
+                localStorage.setItem('userProfileImage', profile.profileImage);
+            }
+
+            setLoading(false);
+            setIsEditing(false);
+            alert("Profile updated successfully!");
+        }, 800);
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <nav className="bg-white border-b sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16 items-center">
-                        <Link to="/provider/dashboard" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-                            <ArrowLeft size={20} />
-                            <span>Back to Dashboard</span>
-                        </Link>
-                        <span className="text-xl font-bold text-gray-900">My Profile</span>
-                        <div className="w-24"></div>
+            <Navbar user={user} />
+
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <Button variant="ghost" className="mb-6 flex items-center gap-2" onClick={() => navigate('/provider/dashboard')}>
+                    <ArrowLeft size={18} /> Back to Dashboard
+                </Button>
+
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
+                    <Button onClick={() => isEditing ? handleSave() : setIsEditing(true)} disabled={loading}>
+                        {loading ? 'Saving...' : (isEditing ? <><Save size={18} className="mr-2" /> Save Changes</> : 'Edit Profile')}
+                    </Button>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Left Column: Image & Bio */}
+                    <div className="space-y-6">
+                        <Card>
+                            <CardContent className="pt-6 text-center">
+                                <div className="relative inline-block">
+                                    <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 mx-auto border-4 border-white shadow-lg">
+                                        {profile.profileImage ? (
+                                            <img src={profile.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+                                                <User size={48} />
+                                            </div>
+                                        )}
+                                    </div>
+                                    {isEditing && (
+                                        <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 shadow-sm transition">
+                                            <Camera size={16} />
+                                            <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                                        </label>
+                                    )}
+                                </div>
+                                <h2 className="mt-4 text-xl font-bold text-gray-900">{profile.name}</h2>
+                                <p className="text-sm text-blue-600 font-medium bg-blue-50 inline-block px-3 py-1 rounded-full mt-2">Service Provider</p>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-lg">About Me</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {isEditing ? (
+                                    <textarea
+                                        name="bio"
+                                        value={profile.bio}
+                                        onChange={handleInputChange}
+                                        rows={4}
+                                        className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                        placeholder="Tell customers about your experience..."
+                                    />
+                                ) : (
+                                    <p className="text-gray-600 text-sm leading-relaxed">
+                                        {profile.bio || "No bio added yet."}
+                                    </p>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Right Column: Details */}
+                    <div className="lg:col-span-2">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Personal Details</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-500">Full Name</label>
+                                        {isEditing ? (
+                                            <Input name="name" value={profile.name} onChange={handleInputChange} />
+                                        ) : (
+                                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg text-gray-900">
+                                                <User size={18} className="text-gray-400" /> {profile.name}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-500">Email Address</label>
+                                        {isEditing ? (
+                                            <Input name="email" value={profile.email} onChange={handleInputChange} />
+                                        ) : (
+                                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg text-gray-900">
+                                                <Mail size={18} className="text-gray-400" /> {profile.email}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-500">Mobile Number</label>
+                                        {isEditing ? (
+                                            <Input name="mobile" value={profile.mobile} onChange={handleInputChange} placeholder="+1 234 567 890" />
+                                        ) : (
+                                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg text-gray-900">
+                                                <Phone size={18} className="text-gray-400" /> {profile.mobile || "Not set"}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-500">Location / Address</label>
+                                        {isEditing ? (
+                                            <Input name="location" value={profile.location} onChange={handleInputChange} placeholder="City, Country" />
+                                        ) : (
+                                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg text-gray-900">
+                                                <MapPin size={18} className="text-gray-400" /> {profile.location || "Not set"}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
-            </nav>
-
-            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-                {/* Profile Info */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Professional Profile</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="flex flex-col md:flex-row gap-8 items-start">
-                            <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-                                <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="flex-1 space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-1">
-                                        <label className="text-sm font-medium text-gray-500">Full Name</label>
-                                        <div className="flex items-center gap-2 text-gray-900">
-                                            <User size={18} className="text-gray-400" />
-                                            {user.name}
-                                        </div>
-                                    </div>
-                                    <div className="space-y-1">
-                                        <label className="text-sm font-medium text-gray-500">Service Category</label>
-                                        <div className="flex items-center gap-2 text-gray-900">
-                                            <Briefcase size={18} className="text-gray-400" />
-                                            {user.serviceCategory}
-                                        </div>
-                                    </div>
-                                    <div className="space-y-1">
-                                        <label className="text-sm font-medium text-gray-500">Email Address</label>
-                                        <div className="flex items-center gap-2 text-gray-900">
-                                            <Mail size={18} className="text-gray-400" />
-                                            {user.email}
-                                        </div>
-                                    </div>
-                                    <div className="space-y-1">
-                                        <label className="text-sm font-medium text-gray-500">Phone Number</label>
-                                        <div className="flex items-center gap-2 text-gray-900">
-                                            <Phone size={18} className="text-gray-400" />
-                                            {user.phone}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-500">Bio</label>
-                                    <p className="text-gray-700">{user.bio}</p>
-                                </div>
-
-                                <div className="flex items-center gap-6 pt-4 border-t">
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-gray-900">{user.rating}</div>
-                                        <div className="text-sm text-gray-500 flex items-center gap-1">
-                                            <Star size={14} className="text-yellow-500 fill-current" />
-                                            Rating
-                                        </div>
-                                    </div>
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-gray-900">{user.reviews}</div>
-                                        <div className="text-sm text-gray-500">Reviews</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mt-8 flex justify-end">
-                            <Button variant="outline">Edit Profile</Button>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Services Offered */}
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle>My Services</CardTitle>
-                        <Button size="sm">Add New Service</Button>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            {services.map((service) => (
-                                <div key={service.id} className="border rounded-lg p-4 flex gap-4">
-                                    <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                                        <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="flex justify-between items-start">
-                                            <h4 className="font-bold text-gray-900">{service.title}</h4>
-                                            <span className="font-bold text-blue-600">${service.price}</span>
-                                        </div>
-                                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">{service.description}</p>
-                                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                                            <div className="flex items-center gap-1">
-                                                <Star size={14} className="text-yellow-500 fill-current" />
-                                                {service.rating}
-                                            </div>
-                                            <div>{service.location}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            </main>
+            </div>
         </div>
     );
 };
