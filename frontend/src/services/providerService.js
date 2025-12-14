@@ -95,3 +95,21 @@ export const getProviderListings = async (providerId) => {
 
     return response.data
 }
+
+export const getListingById = async (listingId) => {
+    console.log("getListingById called with listingId:", listingId);
+    if (!listingId) {
+        throw new Error('listingId is required to fetch provider listings')
+    }
+
+    const numericlistingId = Number(listingId)
+    console.log("Fetching listing with ID:", numericlistingId);
+    if (Number.isNaN(numericlistingId)) {
+        throw new Error('providerId must be a valid number')
+    } 
+    const response = await apiClient.get(
+        `/provider/${numericlistingId}/listing`
+    )
+
+    return response.data
+}

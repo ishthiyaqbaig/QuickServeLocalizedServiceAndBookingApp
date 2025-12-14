@@ -2,6 +2,7 @@ package com.example.backend.controllers;
 
 import com.example.backend.dto.UpdateLocationRequest;
 import com.example.backend.dto.UpdateProfileRequest;
+import com.example.backend.dto.UserResponse;
 import com.example.backend.entity.User;
 import com.example.backend.services.UserProfileService;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,10 @@ public class UserProfileController {
     @PutMapping("/{userId}/location")
     public ResponseEntity<User> updateLocation(@PathVariable Long userId, @RequestBody UpdateLocationRequest req) {
         return ResponseEntity.ok(userProfileService.updateLocation(userId, req));
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponse> getUserProfile(@PathVariable Long userId) {
+        return ResponseEntity.ok(userProfileService.getUserById(userId));
     }
 }

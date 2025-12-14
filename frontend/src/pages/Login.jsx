@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
+import { jwtDecode } from "jwt-decode";
 import { useNavigate, Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
@@ -54,20 +55,21 @@ export default function Login() {
             .then((data) => {
                 console.log('Login successful:', data)
                 if (data.token) {
-                    localStorage.setItem('authToken', data.token)
-                    localStorage.setItem('userId', data.userId)
-                    // FALLBACK: If backend misses userId, use default for demo
-                    // Provider -> 1, Customer -> 2 (Assumes these exist in DB)
-                    // const userId = data.userId || (role === 'PROVIDER' ? '1' : '2')
-                    // localStorage.setItem('userId', userId)
+                     localStorage.setItem('authToken', data.token)
+
+                    // ✅ Decode token to get ID & role
+                    const decoded = jwtDecode(data.token)
+
+                    const userId = decoded.userId
+                    const userRole = decoded.role
+
+                    localStorage.setItem('userId', userId)
+                    localStorage.setItem('userRole', userRole)
                 }
                 localStorage.setItem('userRole', role)
-                // Assuming response contains user name, if not stored from previous session or API doesn't return it, we might check how getting user details works. 
-                // For now, let's keep it simple or remove if undefined.
-                // localStorage.setItem('userName', data.name || 'User') 
 
                 if (role === 'PROVIDER') {
-                    navigate('/provider/create-listing')
+                    navigate('/provider/dashboard')
                 } else {
                     navigate('/customer/search')
                 }

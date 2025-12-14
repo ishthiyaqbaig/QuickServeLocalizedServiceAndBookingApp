@@ -8,6 +8,7 @@ import CustomerDashboard from './pages/CustomerDashboard';
 import ProviderDashboard from './pages/ProviderDashboard';
 import CustomerProfile from './pages/CustomerProfile';
 import ProviderProfile from './pages/ProviderProfile';
+import UpdateListing from './pages/UpdateListing';
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/provider/create-listing" element={<CreateListing />} />
+                <Route path="/provider/update-listing/:id" element={<UpdateListing />} />
                 <Route path="/customer/dashboard" element={<CustomerDashboard />} />
                 <Route path="/customer/search" element={<CustomerDashboard />} /> {/* Alias for search */}
                 <Route path="/provider/dashboard" element={<ProviderDashboard />} />

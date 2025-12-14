@@ -2,6 +2,7 @@ package com.example.backend.services;
 
 import com.example.backend.dto.UpdateLocationRequest;
 import com.example.backend.dto.UpdateProfileRequest;
+import com.example.backend.dto.UserResponse;
 import com.example.backend.entity.User;
 import com.example.backend.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,21 @@ public class UserProfileService {
         if (request.getPermanentLongitude() != null) user.setPermanentLongitude(request.getPermanentLongitude());
         if (request.getPermanentAddress() != null) user.setPermanentAddress(request.getPermanentAddress());
         return userRepository.save(user);
+    }
+
+    public UserResponse getUserById(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        UserResponse dto = new UserResponse();
+        dto.setId(user.getId());
+        dto.setEmail(user.getEmail());
+        dto.setUserName(user.getUserName());
+        dto.setRole(user.getRole());
+        dto.setPermanentLatitude(user.getPermanentLatitude());
+        dto.setPermanentLongitude(user.getPermanentLongitude());
+        dto.setPermanentAddress(user.getPermanentAddress());
+        dto.setCreatedAt(user.getCreatedAt());
+        return dto;
     }
 }

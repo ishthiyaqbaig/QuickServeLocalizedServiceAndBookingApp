@@ -149,7 +149,7 @@ const ProviderDashboard = () => {
                                     >
                                         {listing.disabled ? 'Enable' : 'Disable'}
                                     </Button>
-                                    <Button size="sm" variant="outline" onClick={() => alert("Edit feature coming soon!")}>
+                                    <Button size="sm" variant="outline" onClick={() => navigate(`/provider/update-listing/${listing.id}`)}>
                                         <Edit size={16} />
                                     </Button>
                                     <Button size="sm" variant="outline" className="text-red-600 hover:bg-red-50" onClick={() => handleDeleteListing(listing.id)}>

@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Upload } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
 import { Navbar } from '../components/layout/Navbar'
 import { Select } from '../components/ui/Select'
-import { createListing } from '../services/providerService'
 import { getCategories } from '../services/categoryService'
+import { getListingById, updateListing } from '../services/providerService'
 
-export default function CreateListing() {
+export default function UpdateListing() {
     const navigate = useNavigate()
+    const { id } = useParams() // listingId
     const [loading, setLoading] = useState(false)
-    const [imagePreview, setImagePreview] = useState(null)
-    const [file, setFile] = useState(null)
     const [categories, setCategories] = useState([])
+    const [file, setFile] = useState(null)
+    const [imagePreview, setImagePreview] = useState(null)
 
     const [formData, setFormData] = useState({
         title: '',
@@ -22,28 +23,45 @@ export default function CreateListing() {
         categoryId: '',
     })
 
-    // Fetch categories on load
-    useEffect(() => {
-        getCategories()
-            .then((data) => {
-                const normalized = Array.isArray(data) ? data : []
-                setCategories(normalized)
+    /* ---------------- FETCH DATA ---------------- */
 
-                // set first category by default
-                if (normalized.length > 0) {
-                    setFormData((prev) => ({
-                        ...prev,
-                        categoryId: normalized[0].id,
-                    }))
-                } else {
-                    setFormData((prev) => ({
-                        ...prev,
-                        categoryId: '',
-                    }))
-                }
-            })
-            .catch((err) => console.error('Failed to load categories', err))
+    useEffect(() => {
+        fetchCategories()
+        fetchListing()
     }, [])
+
+    const fetchCategories = async () => {
+        try {
+            const data = await getCategories()
+            setCategories(Array.isArray(data) ? data : [])
+        } catch (error) {
+            console.error('Failed to load categories', error)
+        }
+    }
+
+    const fetchListing = async () => {
+        try {
+            const listing = await getListingById(id)
+            console.log("Fetched listing:", listing);
+            setFormData({
+                title: listing.title,
+                description: listing.description,
+                price: listing.price,
+                categoryId: listing.category?.id || '',
+            })
+
+            // Existing image preview
+            if (listing.images) {
+                setImagePreview(listing.images)
+            }
+        } catch (error) {
+            console.error('Failed to load listing', error)
+            alert('Listing not found')
+            navigate('/provider/dashboard')
+        }
+    }
+
+    /* ---------------- HANDLERS ---------------- */
 
     const handleImageChange = (e) => {
         const selectedFile = e.target.files[0]
@@ -53,41 +71,31 @@ export default function CreateListing() {
         }
     }
 
-
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
 
         try {
-            const providerId = localStorage.getItem('userId')
-
-            if (!providerId) {
-                alert('User ID missing. Login again.')
-                navigate('/login')
-                return
-            }
-
             const form = new FormData()
             form.append('title', formData.title)
             form.append('description', formData.description)
             form.append('price', formData.price)
 
-            if (categories.length > 0 && formData.categoryId) {
+            if (formData.categoryId) {
                 form.append('categoryId', formData.categoryId)
             }
 
-            // Only append location if fetched; prevent sending empty strings for doubles
+            if (file) {
+                form.append('image', file)
+            }
 
-            if (file) form.append('image', file)
+            await updateListing(id, form)
 
-            await createListing(providerId, form)
-
-            alert('Listing created successfully!')
+            alert('Listing updated successfully!')
             navigate('/provider/dashboard')
         } catch (error) {
-            console.error('Failed to create listing:', error)
-            const msg = error.response?.data?.message || 'Failed to create listing'
-            alert(msg)
+            console.error('Update failed:', error)
+            alert(error.response?.data?.message || 'Failed to update listing')
         } finally {
             setLoading(false)
         }
@@ -98,22 +106,29 @@ export default function CreateListing() {
         role: 'PROVIDER',
     }
 
+    /* ---------------- UI ---------------- */
+
     return (
         <div className="min-h-screen bg-gray-50">
             <Navbar user={user} />
 
             <div className="py-12 px-4">
                 <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
-
-                    <h2 className="text-3xl font-bold text-center mb-6">Create Service Listing</h2>
+                    <h2 className="text-3xl font-bold text-center mb-6">
+                        Update Service Listing
+                    </h2>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
 
                         {/* Image Upload */}
                         <div className="flex flex-col items-center gap-4">
-                            <div className="w-full h-48 bg-gray-100 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center overflow-hidden relative">
+                            <div className="w-full h-48 bg-gray-100 border-2 border-dashed rounded-xl flex items-center justify-center overflow-hidden relative">
                                 {imagePreview ? (
-                                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                                    <img
+                                        src={imagePreview}
+                                        alt="Preview"
+                                        className="w-full h-full object-cover"
+                                    />
                                 ) : (
                                     <div className="text-gray-500 text-center">
                                         <Upload className="mx-auto h-10 w-10 mb-2" />
@@ -133,37 +148,41 @@ export default function CreateListing() {
                         {/* Title */}
                         <Input
                             label="Service Title"
-                            placeholder="e.g. AC Repair"
                             value={formData.title}
-                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                            onChange={(e) =>
+                                setFormData({ ...formData, title: e.target.value })
+                            }
                             required
                         />
 
-                        {/* Category (DYNAMIC) */}
+                        {/* Category */}
                         <Select
                             label="Category"
-                            options={
-                                categories.length > 0
-                                    ? categories.map((c) => ({
+                            options={categories.map((c) => ({
                                 value: c.id,
                                 label: c.name,
-                                    }))
-                                    : [{ value: '', label: 'No categories available' }]
+                            }))}
+                            value={formData.categoryId}
+                            onChange={(e) =>
+                                setFormData({ ...formData, categoryId: e.target.value })
                             }
-                            value={categories.length > 0 ? formData.categoryId : ''}
-                            onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                            disabled={categories.length === 0}
                         />
 
                         {/* Description */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <label className="block text-sm font-medium mb-2">
+                                Description
+                            </label>
                             <textarea
                                 rows={4}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                                placeholder="Describe your service..."
+                                className="w-full px-3 py-2 border rounded-lg"
                                 value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        description: e.target.value,
+                                    })
+                                }
                                 required
                             />
                         </div>
@@ -172,15 +191,15 @@ export default function CreateListing() {
                         <Input
                             label="Price (₹)"
                             type="number"
-                            placeholder="500"
                             value={formData.price}
-                            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                            onChange={(e) =>
+                                setFormData({ ...formData, price: e.target.value })
+                            }
                             required
                         />
 
-                        {/* Submit */}
                         <Button type="submit" className="w-full py-3" disabled={loading}>
-                            {loading ? 'Creating...' : 'Create Listing'}
+                            {loading ? 'Updating...' : 'Update Listing'}
                         </Button>
                     </form>
                 </div>
