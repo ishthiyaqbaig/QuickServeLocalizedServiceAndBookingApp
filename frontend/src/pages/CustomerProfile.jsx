@@ -1,113 +1,176 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { User, Mail, Phone, MapPin, Calendar, Clock, ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { User, Mail, Phone, MapPin, Camera, Save, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { MOCK_USERS, MOCK_APPOINTMENTS } from '../data/mockData';
+import { Input } from '../components/ui/Input';
+import { Navbar } from '../components/layout/Navbar';
 
 const CustomerProfile = () => {
-    const user = MOCK_USERS.customer;
-    const appointments = MOCK_APPOINTMENTS.filter(app => app.customerId === user.id);
+    const navigate = useNavigate();
+    const [isEditing, setIsEditing] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    // Initial state from localStorage or defaults
+    const [profile, setProfile] = useState({
+        name: localStorage.getItem('userName') || 'Customer',
+        email: localStorage.getItem('userEmail') || 'customer@example.com',
+        mobile: localStorage.getItem('userMobile') || '',
+        location: localStorage.getItem('userLocation') || '',
+        profileImage: localStorage.getItem('userProfileImage') || null
+    });
+
+    const user = {
+        name: profile.name,
+        role: 'CUSTOMER'
+    };
+
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate('/');
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setProfile(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfile(prev => ({
+                    ...prev,
+                    profileImage: reader.result
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSave = () => {
+        setLoading(true);
+        // Simulator API call / Persistence to LocalStorage
+        setTimeout(() => {
+            localStorage.setItem('userName', profile.name);
+            localStorage.setItem('userEmail', profile.email);
+            localStorage.setItem('userMobile', profile.mobile);
+            localStorage.setItem('userLocation', profile.location);
+            if (profile.profileImage) {
+                localStorage.setItem('userProfileImage', profile.profileImage);
+            }
+
+            setLoading(false);
+            setIsEditing(false);
+            alert("Profile updated successfully!");
+        }, 800);
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <nav className="bg-white border-b sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16 items-center">
-                        <Link to="/customer/dashboard" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-                            <ArrowLeft size={20} />
-                            <span>Back to Dashboard</span>
-                        </Link>
-                        <span className="text-xl font-bold text-gray-900">My Profile</span>
-                        <div className="w-24"></div> {/* Spacer for centering */}
+            <Navbar user={user} onLogout={handleLogout} />
+
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <Button variant="ghost" className="mb-6 flex items-center gap-2" onClick={() => navigate('/customer/dashboard')}>
+                    <ArrowLeft size={18} /> Back to Dashboard
+                </Button>
+
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
+                    <Button onClick={() => isEditing ? handleSave() : setIsEditing(true)} disabled={loading}>
+                        {loading ? 'Saving...' : (isEditing ? <><Save size={18} className="mr-2" /> Save Changes</> : 'Edit Profile')}
+                    </Button>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Left Column: Image */}
+                    <div className="space-y-6">
+                        <Card>
+                            <CardContent className="pt-6 text-center">
+                                <div className="relative inline-block">
+                                    <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 mx-auto border-4 border-white shadow-lg">
+                                        {profile.profileImage ? (
+                                            <img src={profile.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+                                                <User size={48} />
+                                            </div>
+                                        )}
+                                    </div>
+                                    {isEditing && (
+                                        <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 shadow-sm transition">
+                                            <Camera size={16} />
+                                            <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                                        </label>
+                                    )}
+                                </div>
+                                <h2 className="mt-4 text-xl font-bold text-gray-900">{profile.name}</h2>
+                                <p className="text-sm text-blue-600 font-medium bg-blue-50 inline-block px-3 py-1 rounded-full mt-2">Customer</p>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Right Column: Details */}
+                    <div className="lg:col-span-2">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Personal Details</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-500">Full Name</label>
+                                        {isEditing ? (
+                                            <Input name="name" value={profile.name} onChange={handleInputChange} />
+                                        ) : (
+                                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg text-gray-900">
+                                                <User size={18} className="text-gray-400" /> {profile.name}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-500">Email Address</label>
+                                        {isEditing ? (
+                                            <Input name="email" value={profile.email} onChange={handleInputChange} />
+                                        ) : (
+                                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg text-gray-900">
+                                                <Mail size={18} className="text-gray-400" /> {profile.email}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-500">Mobile Number</label>
+                                        {isEditing ? (
+                                            <Input name="mobile" value={profile.mobile} onChange={handleInputChange} placeholder="+1 234 567 890" />
+                                        ) : (
+                                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg text-gray-900">
+                                                <Phone size={18} className="text-gray-400" /> {profile.mobile || "Not set"}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-500">Location / Address</label>
+                                        {isEditing ? (
+                                            <Input name="location" value={profile.location} onChange={handleInputChange} placeholder="City, Country" />
+                                        ) : (
+                                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg text-gray-900">
+                                                <MapPin size={18} className="text-gray-400" /> {profile.location || "Not set"}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
-            </nav>
-
-            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-                {/* Profile Info */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Personal Information</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="flex flex-col md:flex-row gap-8 items-start">
-                            <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-                                <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium text-gray-500">Full Name</label>
-                                    <div className="flex items-center gap-2 text-gray-900">
-                                        <User size={18} className="text-gray-400" />
-                                        {user.name}
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium text-gray-500">Email Address</label>
-                                    <div className="flex items-center gap-2 text-gray-900">
-                                        <Mail size={18} className="text-gray-400" />
-                                        {user.email}
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium text-gray-500">Phone Number</label>
-                                    <div className="flex items-center gap-2 text-gray-900">
-                                        <Phone size={18} className="text-gray-400" />
-                                        {user.phone}
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium text-gray-500">Address</label>
-                                    <div className="flex items-center gap-2 text-gray-900">
-                                        <MapPin size={18} className="text-gray-400" />
-                                        {user.address}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mt-8 flex justify-end">
-                            <Button variant="outline">Edit Profile</Button>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Appointments */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>My Appointments</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            {appointments.map((apt) => (
-                                <div key={apt.id} className="border rounded-lg p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                    <div>
-                                        <h4 className="font-bold text-gray-900">{apt.serviceTitle}</h4>
-                                        <p className="text-sm text-gray-600">Provider: {apt.providerName}</p>
-                                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                                            <div className="flex items-center gap-1">
-                                                <Calendar size={16} />
-                                                {apt.date}
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <Clock size={16} />
-                                                {apt.time}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${apt.status === 'Confirmed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                                            }`}>
-                                            {apt.status}
-                                        </span>
-                                        <span className="font-bold text-gray-900">${apt.price}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            </main>
+            </div>
         </div>
     );
 };

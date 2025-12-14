@@ -1,18 +1,97 @@
 import apiClient from '../api/client'
 
+/**
+ * Create a new listing for a provider
+ */
 export const createListing = async (providerId, formData) => {
-    // Content-Type multipart/form-data is usually set automatically by axios when data is FormData
-    const response = await apiClient.post(`/provider/${providerId}/listings`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
-    })
+    if (!providerId) {
+        throw new Error('providerId is required to create a listing')
+    }
+
+    const numericProviderId = Number(providerId)
+
+    if (Number.isNaN(numericProviderId)) {
+        throw new Error('providerId must be a valid number')
+    }
+
+    const response = await apiClient.post(
+        `/provider/${numericProviderId}/listings`,
+        formData,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        }
+    )
+
     return response.data
 }
 
-export const searchProviders = async (lat, lng, categoryId) => {
-    const response = await apiClient.get(`/search`, {
-        params: { lat, lng, categoryId }
-    })
+/**
+ * Update an existing listing
+ */
+export const updateListing = async (listingId, formData) => {
+    if (!listingId) {
+        throw new Error('listingId is required to update a listing')
+    }
+
+    const numericListingId = Number(listingId)
+
+    if (Number.isNaN(numericListingId)) {
+        throw new Error('listingId must be a valid number')
+    }
+
+    const response = await apiClient.put(
+        `/provider/listings/${numericListingId}`,
+        formData,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        }
+    )
+
+    return response.data
+}
+
+/**
+ * Delete a listing
+ */
+export const deleteListing = async (listingId) => {
+    if (!listingId) {
+        throw new Error('listingId is required to delete a listing')
+    }
+
+    const numericListingId = Number(listingId)
+
+    if (Number.isNaN(numericListingId)) {
+        throw new Error('listingId must be a valid number')
+    }
+
+    const response = await apiClient.delete(
+        `/provider/listings/${numericListingId}`
+    )
+
+    return response.data
+}
+
+/**
+ * Get all listings for a provider
+ */
+export const getProviderListings = async (providerId) => {
+    if (!providerId) {
+        throw new Error('providerId is required to fetch provider listings')
+    }
+
+    const numericProviderId = Number(providerId)
+
+    if (Number.isNaN(numericProviderId)) {
+        throw new Error('providerId must be a valid number')
+    }
+
+    const response = await apiClient.get(
+        `/provider/${numericProviderId}/listings`
+    )
+
     return response.data
 }

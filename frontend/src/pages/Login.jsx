@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
-import { MOCK_USERS } from '../data/mockData'
 import { Navbar } from '../components/layout/Navbar'
 import { Select } from '../components/ui/Select'
 import { login } from '../services/authService'
@@ -57,6 +56,10 @@ export default function Login() {
                 if (data.token) {
                     localStorage.setItem('authToken', data.token)
                     localStorage.setItem('userId', data.userId)
+                    // FALLBACK: If backend misses userId, use default for demo
+                    // Provider -> 1, Customer -> 2 (Assumes these exist in DB)
+                    // const userId = data.userId || (role === 'PROVIDER' ? '1' : '2')
+                    // localStorage.setItem('userId', userId)
                 }
                 localStorage.setItem('userRole', role)
                 // Assuming response contains user name, if not stored from previous session or API doesn't return it, we might check how getting user details works. 
@@ -122,11 +125,7 @@ export default function Login() {
                         </div>
 
 
-                        {/* <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg mb-4">
-                            <p><strong>Demo Credentials:</strong></p>
-                            <p>Customer: alex.j@example.com / any password</p>
-                            <p>Provider: sarah.s@example.com / any password</p>
-                        </div> */}
+
 
                         <Button type="submit" className="w-full py-3 text-lg rounded-lg">
                             Sign In

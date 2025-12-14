@@ -71,34 +71,36 @@ export default function SignUp() {
 
         register(userData)
             .then((data) => {
-               console.log('Registration successful:', data)
+                console.log('Registration successful:', data)
 
-    if (data.token) {
-        localStorage.setItem('authToken', data.token)
+                if (data.token) {
+                    localStorage.setItem('authToken', data.token)
 
-        // ✅ Decode token to get ID & role
-        const decoded = jwtDecode(data.token)
+                    // ✅ Decode token to get ID & role
+                    const decoded = jwtDecode(data.token)
 
-        const userId = decoded.userId
-        const userRole = decoded.role
+                    const userId = decoded.userId
+                    const userRole = decoded.role
 
-        localStorage.setItem('userId', userId)
-        localStorage.setItem('userRole', userRole)
-    }
+                    localStorage.setItem('userId', userId)
+                    localStorage.setItem('userRole', userRole)
+                }
 
-    localStorage.setItem('userName', formData.userName)
+                localStorage.setItem('userName', formData.userName)
 
-    if (role === 'SERVICE_PROVIDER') {
-        navigate('/provider/create-listing')
-    } else {
-        navigate('/customer/search')
-    }
+                if (role === 'SERVICE_PROVIDER') {
+                    navigate('/provider/profile')
+                } else {
+                    navigate('/customer/search')
+                }
             })
             .catch((error) => {
                 console.error('Registration failed:', error)
                 setApiError(error.response?.data?.message || 'Registration failed. Please try again.')
             })
     }
+    
+
 
     return (
         <div className="min-h-screen bg-gray-50">
