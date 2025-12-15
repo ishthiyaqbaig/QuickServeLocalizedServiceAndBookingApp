@@ -46,7 +46,6 @@ public class ProviderController {
     @GetMapping("/{listingId}/listing")
     public ResponseEntity<Listing> getListing(
             @PathVariable Long listingId) {
-        System.out.println(listingId);
         Listing listing = listingService.getListing(listingId);
         return ResponseEntity.ok(listing);
     }

@@ -1,247 +1,283 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   User,
   Mail,
   Phone,
-  MapPin,
   Camera,
-  Save,
-  ArrowLeft
-} from 'lucide-react';
+  Navigation,
+  ArrowLeft,
+} from "lucide-react";
 
-import { Button } from '../components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { Input } from '../components/ui/Input';
-import { Navbar } from '../components/layout/Navbar';
+import { Button } from "../components/ui/Button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/Card";
+import { Input } from "../components/ui/Input";
+import { Navbar } from "../components/layout/Navbar";
 
 import {
   getUser,
   updateProfile,
-  updateLocation
-} from '../services/userService';
+  updateLocation,
+} from "../services/userService";
 
 const ProviderProfile = () => {
   const navigate = useNavigate();
+  const userId = localStorage.getItem("userId");
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+  const [loadingLocation, setLoadingLocation] = useState(false);
+  const [locationStatus, setLocationStatus] = useState("");
 
   const [profile, setProfile] = useState({
-    name: '',
-    email: '',
-    mobile: '',
-    bio: '',
-    location: '',
-    profileImage: null
+    name: "",
+    email: "",
+    mobile: "",
+    image: null,      // File
+    preview: null,    // Preview URL
   });
 
-  /* ---------------- FETCH USER ON LOAD ---------------- */
+  const [location, setLocation] = useState({
+    lat: "",
+    lng: "",
+    address: "",
+  });
+
+  /* ---------------- FETCH USER ---------------- */
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userId = localStorage.getItem('userId');
         const data = await getUser(userId);
-
         setProfile({
-          name: data.userName || '',
-          email: data.email || '',
-          mobile: data.mobile || 'xxxxxxxxxx',
-          bio: data.bio || '',
-          location: data.permanentAddress || '',
-          profileImage: data.profileImage || null
+          name: data.userName || "",
+          email: data.email || "",
+          mobile: data.number || "",
+          image: null,
+          preview: data.image || null, // image URL from backend
         });
-      } catch (error) {
-        console.error('Unauthorized or session expired');
-        navigate('/login');
+
+        setLocation({
+          lat: data.permanentLatitude || "",
+          lng: data.permanentLongitude || "",
+          address: data.permanentAddress || "",
+        });
+      } catch {
+        navigate("/login");
       }
     };
 
     fetchUser();
-  }, [navigate]);
+  }, [navigate, userId]);
 
-  /* ---------------- HANDLERS ---------------- */
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setProfile((prev) => ({ ...prev, [name]: value }));
-  };
-
+  /* ---------------- IMAGE HANDLER ---------------- */
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setProfile((prev) => ({
-        ...prev,
-        profileImage: reader.result
-      }));
-    };
-    reader.readAsDataURL(file);
+    setProfile((prev) => ({
+      ...prev,
+      image: file,
+      preview: URL.createObjectURL(file),
+    }));
   };
 
-  const handleSave = async () => {
-    setLoading(true);
+  /* ---------------- GEO LOCATION ---------------- */
+  const getGeoLocation = () => {
+    setLocationStatus("Fetching location...");
+
+    if (!navigator.geolocation) {
+      setLocationStatus("Geolocation not supported");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocation((prev) => ({
+          ...prev,
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        }));
+        setLocationStatus("Location detected ✔");
+      },
+      () => setLocationStatus("Location access denied")
+    );
+  };
+
+  /* ---------------- UPDATE PROFILE ---------------- */
+  const handleProfileUpdate = async () => {
+    setLoadingProfile(true);
     try {
-      await updateProfile({
-        userName: profile.name,
-        mobile: profile.mobile,
-        bio: profile.bio
-      });
+      const formData = new FormData();
+      formData.append("userName", profile.name);
+      formData.append("email", profile.email);
+      formData.append(
+        "number",
+        profile.mobile
+      );
 
-      await updateLocation({
-        permanentAddress: profile.location
-      });
+      if (profile.image) {
+        formData.append("image", profile.image); // IMPORTANT
+      }
 
-      alert('Profile updated successfully');
-      setIsEditing(false);
-    } catch (error) {
-      console.error(error);
-      alert('Failed to update profile');
+      await updateProfile(userId, formData);
+      alert("Profile updated successfully");
     } finally {
-      setLoading(false);
+      setLoadingProfile(false);
     }
   };
 
-  const navbarUser = {
-    name: profile.name,
-    role: 'SERVICE_PROVIDER'
+  /* ---------------- UPDATE LOCATION ---------------- */
+  const handleLocationUpdate = async () => {
+    setLoadingLocation(true);
+    try {
+      await updateLocation(userId, {
+        permanentLatitude: location.lat || null,
+        permanentLongitude: location.lng || null,
+        permanentAddress: location.address,
+      });
+      alert("Location updated successfully");
+    } finally {
+      setLoadingLocation(false);
+    }
   };
+
+  const navbarUser = { name: profile.name, role: "PROVIDER" };
 
   /* ---------------- UI ---------------- */
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <Navbar user={navbarUser} />
 
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <Button
-          variant="ghost"
-          className="mb-6 flex items-center gap-2"
-          onClick={() => navigate('/provider/dashboard')}
+      <div className="max-w-6xl mx-auto px-4 py-10 space-y-8">
+        {/* BACK */}
+        <button
+          onClick={() => navigate("/provider/dashboard")}
+          className="flex items-center gap-2 text-gray-600 hover:text-blue-600"
         >
-          <ArrowLeft size={18} /> Back to Dashboard
-        </Button>
-
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">My Profile</h1>
-          <Button onClick={isEditing ? handleSave : () => setIsEditing(true)} disabled={loading}>
-            {loading ? 'Saving...' : isEditing ? (
-              <>
-                <Save size={18} className="mr-2" /> Save Changes
-              </>
-            ) : (
-              'Edit Profile'
-            )}
-          </Button>
-        </div>
+          <ArrowLeft size={18} />
+          <span className="text-sm font-medium">Back</span>
+        </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* LEFT COLUMN */}
-          <div className="space-y-6">
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="relative inline-block">
-                  <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 mx-auto border">
-                    {profile.profileImage ? (
-                      <img
-                        src={profile.profileImage}
-                        alt="Profile"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-gray-400">
-                        <User size={48} />
-                      </div>
-                    )}
-                  </div>
-
-                  {isEditing && (
-                    <label className="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full cursor-pointer">
-                      <Camera size={16} className="text-white" />
-                      <input type="file" className="hidden" onChange={handleImageUpload} />
-                    </label>
+          {/* PROFILE CARD */}
+          <Card className="rounded-2xl shadow-lg">
+            <CardContent className="pt-8 text-center">
+              <div className="relative inline-block">
+                <div className="w-36 h-36 rounded-full overflow-hidden ring-4 ring-blue-100 bg-gray-100">
+                  {profile.preview ? (
+                    <img
+                      src={profile.preview}
+                      alt="profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-gray-400">
+                      <User size={48} />
+                    </div>
                   )}
                 </div>
 
-                <h2 className="mt-4 text-xl font-bold">{profile.name}</h2>
-                <span className="text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                  Service Provider
-                </span>
+                <label className="absolute bottom-2 right-2 bg-blue-600 p-2 rounded-full cursor-pointer hover:bg-blue-700">
+                  <Camera size={16} className="text-white" />
+                  <input type="file" hidden onChange={handleImageUpload} />
+                </label>
+              </div>
+
+              <h2 className="mt-4 text-xl font-semibold">{profile.name}</h2>
+              <span className="text-xs text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
+                Customer
+              </span>
+            </CardContent>
+          </Card>
+
+          {/* RIGHT SECTION */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* PROFILE FORM */}
+            <Card className="rounded-2xl shadow-lg">
+              <CardHeader>
+                <CardTitle>Profile Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Input
+                  placeholder="Full Name"
+                  value={profile.name}
+                  onChange={(e) =>
+                    setProfile({ ...profile, name: e.target.value })
+                  }
+                />
+
+                <Input
+                  placeholder="Email"
+                  value={profile.email}
+                  disabled
+                />
+
+                <Input
+                  type="tel"
+                  placeholder="Mobile Number"
+                  maxLength={10}
+                  value={profile.mobile}
+                  onChange={(e) =>
+                    setProfile({
+                      ...profile,
+                      mobile: e.target.value.replace(/\D/g, ""),
+                    })
+                  }
+                />
+
+                <Button
+                  className="w-full rounded-xl"
+                  onClick={handleProfileUpdate}
+                  disabled={loadingProfile}
+                >
+                  {loadingProfile ? "Updating..." : "Update Profile"}
+                </Button>
               </CardContent>
             </Card>
 
-            <Card>
+            {/* LOCATION */}
+            <Card className="rounded-2xl shadow-lg">
               <CardHeader>
-                <CardTitle>About Me</CardTitle>
+                <CardTitle>Location Settings</CardTitle>
               </CardHeader>
-              <CardContent>
-                {isEditing ? (
-                  <textarea
-                    name="bio"
-                    value={profile.bio}
-                    onChange={handleInputChange}
-                    rows={4}
-                    className="w-full border rounded-lg p-3"
-                  />
-                ) : (
-                  <p className="text-gray-600">
-                    {profile.bio || 'No bio added yet.'}
-                  </p>
+              <CardContent className="space-y-4">
+                <Input
+                  placeholder="Permanent Address"
+                  value={location.address}
+                  onChange={(e) =>
+                    setLocation({ ...location, address: e.target.value })
+                  }
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Input placeholder="Latitude" value={location.lat} disabled />
+                  <Input placeholder="Longitude" value={location.lng} disabled />
+                </div>
+
+                <Button
+                  variant="outline"
+                  className="w-full flex gap-2"
+                  onClick={getGeoLocation}
+                >
+                  <Navigation size={16} />
+                  Use Current Location
+                </Button>
+
+                {locationStatus && (
+                  <p className="text-sm text-gray-500">{locationStatus}</p>
                 )}
-              </CardContent>
-            </Card>
-          </div>
 
-          {/* RIGHT COLUMN */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Personal Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Name */}
-                <div>
-                  <label className="text-sm text-gray-500">Full Name</label>
-                  {isEditing ? (
-                    <Input name="name" value={profile.name} onChange={handleInputChange} />
-                  ) : (
-                    <div className="flex gap-2 items-center bg-gray-50 p-3 rounded">
-                      <User size={16} /> {profile.name}
-                    </div>
-                  )}
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label className="text-sm text-gray-500">Email</label>
-                  <div className="flex gap-2 items-center bg-gray-50 p-3 rounded">
-                    <Mail size={16} /> {profile.email}
-                  </div>
-                </div>
-
-                {/* Mobile */}
-                <div>
-                  <label className="text-sm text-gray-500">Mobile</label>
-                  {isEditing ? (
-                    <Input name="mobile" value={profile.mobile} onChange={handleInputChange} />
-                  ) : (
-                    <div className="flex gap-2 items-center bg-gray-50 p-3 rounded">
-                      <Phone size={16} /> {profile.mobile || 'Not set'}
-                    </div>
-                  )}
-                </div>
-
-                {/* Location */}
-                <div>
-                  <label className="text-sm text-gray-500">Location</label>
-                  {isEditing ? (
-                    <Input name="location" value={profile.location} onChange={handleInputChange} />
-                  ) : (
-                    <div className="flex gap-2 items-center bg-gray-50 p-3 rounded">
-                      <MapPin size={16} /> {profile.location || 'Not set'}
-                    </div>
-                  )}
-                </div>
+                <Button
+                  className="w-full rounded-xl"
+                  onClick={handleLocationUpdate}
+                  disabled={loadingLocation}
+                >
+                  {loadingLocation ? "Updating..." : "Update Location"}
+                </Button>
               </CardContent>
             </Card>
           </div>

@@ -30,9 +30,13 @@ public class User {
     @Transient
     private String confirmPassword;
 
+    @Column(columnDefinition = "TEXT")
+    private String image; // Cloudinary URL
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private Long number;
     private Double permanentLatitude;
     private Double permanentLongitude;
     private String permanentAddress;

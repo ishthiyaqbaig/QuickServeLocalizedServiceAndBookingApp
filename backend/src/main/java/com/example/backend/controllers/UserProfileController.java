@@ -17,7 +17,7 @@ public class UserProfileController {
     private final UserProfileService userProfileService;
 
     @PutMapping("/{userId}/profile")
-    public ResponseEntity<User> updateProfile(@PathVariable Long userId, @RequestBody UpdateProfileRequest req) {
+    public ResponseEntity<User> updateProfile(@PathVariable Long userId, @ModelAttribute UpdateProfileRequest req) {
         return ResponseEntity.ok(userProfileService.updateProfile(userId, req));
     }
 

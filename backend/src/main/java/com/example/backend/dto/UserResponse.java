@@ -11,6 +11,8 @@ public class UserResponse {
     private String email;
     private String userName;
     private Role role;
+    private String image;
+    private Long number;
 
     private Double permanentLatitude;
     private Double permanentLongitude;
