@@ -181,7 +181,7 @@ const CustomerDashboard = () => {
                                         <p className="text-lg font-bold text-blue-600">₹{service.price}</p>
                                     </div>
 
-                                    <Button>Book Now</Button>
+                                    <Button className="cursor-pointer">Book Now</Button>
                                 </div>
                             </div>
                         </div>

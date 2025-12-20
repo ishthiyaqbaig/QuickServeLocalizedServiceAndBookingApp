@@ -1,12 +1,17 @@
 package com.example.backend.controllers;
 
+import com.example.backend.dto.AvailabilityRequest;
 import com.example.backend.dto.CreateListingRequest;
+import com.example.backend.dto.RemoveSlotRequest;
 import com.example.backend.dto.UpdateListingRequest;
+import com.example.backend.entity.Booking;
 import com.example.backend.entity.Listing;
+import com.example.backend.entity.ProviderAvailability;
+import com.example.backend.enums.DayEnum;
+import com.example.backend.services.BookingService;
 import com.example.backend.services.ListingService;
-import com.example.backend.services.SearchService;
+import com.example.backend.services.ProviderAvailabilityService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +23,8 @@ import java.util.List;
 public class ProviderController {
 
     private final ListingService listingService;
-    private final SearchService searchService;
+    private final BookingService bookingService;
+    private final ProviderAvailabilityService providerAvailabilityService;
 
     // Test endpoint
     @GetMapping("/test")
@@ -26,6 +32,7 @@ public class ProviderController {
         return ResponseEntity.ok("Provider endpoint working!");
     }
 
+    //Listing
     @PostMapping("/{providerId}/listings")
     public ResponseEntity<Listing> createListing(
             @PathVariable Long providerId,
@@ -69,13 +76,64 @@ public class ProviderController {
         return ResponseEntity.ok("deleted successfully");
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<Listing>> searchNearest(
-            @RequestParam Double lat,
-            @RequestParam Double lng,
-            @RequestParam Long categoryId) {
 
-        List<Listing> listings = searchService.findNearestListings(lat, lng, categoryId);
-        return ResponseEntity.ok(listings);
+    // availability
+
+    @PostMapping("/availability/{providerId}")
+    public ResponseEntity<String> setAvailability(
+            @PathVariable Long providerId,
+            @RequestBody AvailabilityRequest req
+    ) {
+        providerAvailabilityService.saveOrUpdateAvailability(providerId, req);
+        return ResponseEntity.ok("Availability saved");
     }
+
+    @GetMapping("/availability/{providerId}")
+    public ResponseEntity<ProviderAvailability> getAvailability(
+            @PathVariable Long providerId,
+            @RequestParam DayEnum day
+    ) {
+        return ResponseEntity.ok(
+                providerAvailabilityService.getAvailability(providerId, day)
+        );
+    }
+
+    @DeleteMapping("/availability/{providerId}/slot")
+    public ResponseEntity<String> deleteSlot(
+            @PathVariable Long providerId,
+            @RequestBody RemoveSlotRequest req
+    ) {
+        providerAvailabilityService.removeTimeSlot(
+                providerId,
+                req.getDay(),
+                req.getTimeSlot()
+        );
+        return ResponseEntity.ok("Slot removed");
+    }
+
+
+    // Booking
+
+    @GetMapping("/bookings/{providerId}")
+    public ResponseEntity<?> providerBookings(
+            @PathVariable Long providerId
+    ) {
+        return ResponseEntity.ok(bookingService.findByProviderId(providerId));
+    }
+
+    @PostMapping("/bookings/{bookingId}/confirm")
+    public ResponseEntity<Booking> confirmBooking(@PathVariable Long bookingId) {
+        return ResponseEntity.ok(bookingService.confirmBooking(bookingId));
+    }
+
+    @PostMapping("/bookings/{bookingId}/complete")
+    public ResponseEntity<Booking> completeBooking(@PathVariable Long bookingId) {
+        return ResponseEntity.ok(bookingService.completeBooking(bookingId));
+    }
+
+    @PostMapping("/bookings/{bookingId}/cancel")
+    public ResponseEntity<Booking> cancelBooking(@PathVariable Long bookingId) {
+        return ResponseEntity.ok(bookingService.cancelBooking(bookingId));
+    }
+
 }
