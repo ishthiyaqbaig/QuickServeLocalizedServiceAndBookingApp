@@ -4,15 +4,13 @@ import { MapPin, User } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 export const Navbar = ({ showAuthButtons = true, onLogout }) => {
-    const user=localStorage.getItem('userRole')
-    const logoLink = user
-        ? (user.role === 'PROVIDER' ? '/provider/dashboard' : '/customer/dashboard')
-        : '/';
-        const navigate = useNavigate();
-        const logout = () => {
-  localStorage.clear();
-  navigate('/');
-}
+    const userRole = localStorage.getItem('userRole');
+    const logoLink = userRole === 'PROVIDER' ? '/provider/dashboard' : (userRole === 'CUSTOMER' ? '/customer/dashboard' : '/');
+    const navigate = useNavigate();
+    const logout = () => {
+        localStorage.clear();
+        navigate('/');
+    }
     return (
         <nav className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,9 +22,9 @@ export const Navbar = ({ showAuthButtons = true, onLogout }) => {
                         <span className="text-xl font-bold text-gray-900">Quick Serve</span>
                     </Link>
 
-                    {user ? (
+                    {userRole ? (
                         <div className="flex items-center gap-4">
-                            <Link to={user === 'PROVIDER' ? '/provider/profile' : '/customer/profile'}>
+                            <Link to={userRole === 'PROVIDER' ? '/provider/profile' : '/customer/profile'}>
                                 <Button variant="ghost" className="flex items-center gap-2">
                                     <User size={20} />
                                     Profile

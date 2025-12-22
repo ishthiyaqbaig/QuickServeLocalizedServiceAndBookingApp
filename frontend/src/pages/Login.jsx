@@ -1,4 +1,4 @@
-import  { useState } from 'react'
+import { useState } from 'react'
 import { jwtDecode } from "jwt-decode";
 import { useNavigate, Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
@@ -55,18 +55,17 @@ export default function Login() {
             .then((data) => {
                 console.log('Login successful:', data)
                 if (data.token) {
-                     localStorage.setItem('authToken', data.token)
+                    localStorage.setItem('authToken', data.token)
 
                     // ✅ Decode token to get ID & role
                     const decoded = jwtDecode(data.token)
 
                     const userId = decoded.userId
-                    const userRole = decoded.role
+                    const userRole = decoded.role || role; // Use decoded if avail, else fallback to selected role
 
                     localStorage.setItem('userId', userId)
                     localStorage.setItem('userRole', userRole)
                 }
-                localStorage.setItem('userRole', role)
 
                 if (role === 'PROVIDER') {
                     navigate('/provider/dashboard')
