@@ -1,12 +1,6 @@
 package com.example.backend.controllers;
 
 import com.example.backend.dto.AvailabilityRequest;
-<<<<<<< HEAD
-
-import com.example.backend.dto.BookingResponseDTO;
-
-=======
->>>>>>> 20728e8 (update)
 import com.example.backend.dto.CreateListingRequest;
 import com.example.backend.dto.RemoveSlotRequest;
 import com.example.backend.dto.UpdateListingRequest;
@@ -143,3 +137,4 @@ public class ProviderController {
     }
 
 }
+
