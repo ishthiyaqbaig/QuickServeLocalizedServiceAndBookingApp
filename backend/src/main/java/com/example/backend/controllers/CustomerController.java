@@ -1,6 +1,7 @@
 package com.example.backend.controllers;
 
 import com.example.backend.dto.CreateBookingRequest;
+import com.example.backend.dto.CustomerBookingResponse;
 import com.example.backend.entity.Booking;
 import com.example.backend.entity.Listing;
 import com.example.backend.entity.ProviderAvailability;
@@ -46,11 +47,11 @@ public class CustomerController {
     }
 
     @GetMapping("/bookings/{customerId}")
-    public ResponseEntity<List<Booking>> myBookings(
+    public ResponseEntity<List<CustomerBookingResponse>> myBookings(
             @PathVariable Long customerId
     ) {
         return ResponseEntity.ok(
-                bookingService.findByCustomerId(customerId)
+                bookingService.getCustomerBookings(customerId)
         );
     }
 

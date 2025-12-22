@@ -92,7 +92,7 @@ const ProviderDashboard = () => {
     const handleConfirmBooking = async (bookingId) => {
         try {
             await confirmBooking(bookingId);
-            setBookings(bookings.map(b => b.id === bookingId ? { ...b, status: 'Confirmed' } : b));
+            setBookings(bookings.map(b => b.id === bookingId ? { ...b, status: 'CONFIRMED' } : b));
         } catch (err) {
             alert("Failed to confirm booking");
         }
@@ -101,7 +101,7 @@ const ProviderDashboard = () => {
     const handleCompleteBooking = async (bookingId) => {
         try {
             await completeBooking(bookingId);
-            setBookings(bookings.map(b => b.id === bookingId ? { ...b, status: 'Completed' } : b));
+            setBookings(bookings.map(b => b.id === bookingId ? { ...b, status: 'COMPLETED' } : b));
         } catch (err) {
             alert("Failed to complete booking");
         }
@@ -111,7 +111,7 @@ const ProviderDashboard = () => {
         if (window.confirm("Are you sure you want to cancel this booking?")) {
             try {
                 await providerCancelBooking(bookingId);
-                setBookings(bookings.map(b => b.id === bookingId ? { ...b, status: 'Cancelled' } : b));
+                setBookings(bookings.map(b => b.id === bookingId ? { ...b, status: 'CANCELLED' } : b));
             } catch (err) {
                 alert("Failed to cancel booking");
             }
@@ -223,14 +223,15 @@ const ProviderDashboard = () => {
             ) : (
                 <div className="space-y-4">
                     {bookings.map(booking => (
-                        <Card key={booking.id} className="hover:shadow-md transition-shadow">
+                        
+                        <Card key={booking.bookingId} className="hover:shadow-md transition-shadow">{console.log("Rendering booking:", booking)}
                             <CardContent className="p-6 flex flex-col md:flex-row justify-between items-center gap-6">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-3">
                                         <h3 className="font-bold text-xl text-gray-900">{booking.serviceName}</h3>
-                                        <span className={`px-3 py-1 text-[10px] rounded-full font-bold uppercase tracking-wider border ${booking.status === 'Confirmed' ? 'bg-green-50 text-green-700 border-green-200' :
-                                            booking.status === 'Pending' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
-                                                booking.status === 'Completed' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                        <span className={`px-3 py-1 text-[10px] rounded-full font-bold uppercase tracking-wider border ${booking.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 border-green-200' :
+                                            booking.status === 'PENDING' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
+                                                booking.status === 'COMPLETED' ? 'bg-blue-50 text-blue-700 border-blue-200' :
                                                     'bg-gray-50 text-gray-600 border-gray-200'
                                             }`}>
                                             {booking.status}
@@ -239,8 +240,8 @@ const ProviderDashboard = () => {
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
                                         <div className="flex items-center gap-2"><Calendar size={16} className="text-blue-500" /> {booking.bookingDate}</div>
                                         <div className="flex items-center gap-2"><Clock size={16} className="text-blue-500" /> {booking.timeSlot}</div>
-                                        <div className="flex items-center gap-2 font-bold text-blue-600 truncate">₹ {booking.price?booking.price:10000}</div>
-                                        <div className="text-gray-400">ID: #{booking.id.toString().slice(-4)}</div>
+                                        <div className="flex items-center gap-2 font-bold text-blue-600 truncate">₹ {booking.price}</div>
+                                        <div className="text-gray-400">ID: #{booking.bookingId.toString().slice(-4)}</div>
                                     </div>
                                     <div className="mt-4 pt-4 border-t border-gray-50 flex flex-col gap-2">
                                         <div className="flex items-center gap-3">
@@ -265,37 +266,37 @@ const ProviderDashboard = () => {
                                         <>
                                             <Button
                                                 className="flex-1 md:flex-none bg-green-600 hover:bg-green-700 text-white shadow-sm"
-                                                onClick={() => handleConfirmBooking(booking.id)}
+                                                onClick={() => handleConfirmBooking(booking.bookingId)}
                                             >
                                                 Confirm
                                             </Button>
                                             <Button
                                                 variant="outline"
                                                 className="flex-1 md:flex-none text-red-600 hover:bg-red-50 border-red-100"
-                                                onClick={() => handleProviderCancelBooking(booking.id)}
+                                                onClick={() => handleProviderCancelBooking(booking.bookingId)}
                                             >
                                                 Decline
                                             </Button>
                                         </>
                                     )}
-                                    {booking.status === 'Confirmed' && (
+                                    {booking.status === 'CONFIRMED' && (
                                         <div className="flex gap-2 w-full md:w-auto">
                                             <Button
                                                 className="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
-                                                onClick={() => handleCompleteBooking(booking.id)}
+                                                onClick={() => handleCompleteBooking(booking.bookingId)}
                                             >
                                                 Mark as Completed
                                             </Button>
                                             <Button
                                                 variant="outline"
                                                 className="flex-1 md:flex-none"
-                                                onClick={() => handleProviderCancelBooking(booking.id)}
+                                                onClick={() => handleProviderCancelBooking(booking.bookingId)}
                                             >
                                                 Cancel
                                             </Button>
                                         </div>
                                     )}
-                                    {booking.status === 'Completed' && (
+                                    {booking.status === 'COMPLETED' && (
                                         <div className="flex items-center gap-2 text-green-600 font-bold bg-green-50 px-4 py-2 rounded-lg text-sm">
                                             <CheckCircle size={18} /> Done
                                         </div>

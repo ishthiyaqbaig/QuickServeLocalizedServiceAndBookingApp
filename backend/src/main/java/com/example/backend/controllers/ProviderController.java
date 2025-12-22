@@ -118,7 +118,7 @@ public class ProviderController {
     public ResponseEntity<?> providerBookings(
             @PathVariable Long providerId
     ) {
-        return ResponseEntity.ok(bookingService.findByProviderId(providerId));
+        return ResponseEntity.ok(bookingService.getProviderBookings(providerId));
     }
 
     @PostMapping("/bookings/{bookingId}/confirm")

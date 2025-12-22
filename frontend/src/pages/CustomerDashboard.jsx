@@ -152,7 +152,7 @@ const CustomerDashboard = () => {
                     b.id === bookingId ? { ...b, status: 'Cancelled' } : b
                 ));
             } catch (err) {
-                alert("Failed to cancel booking. Only pending bookings can be cancelled by customers.");
+                alert("Failed to cancel booking. Only PENDING bookings can be cancelled by customers.");
             }
         }
     };

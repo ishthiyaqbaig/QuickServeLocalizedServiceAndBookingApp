@@ -1,12 +1,18 @@
 package com.example.backend.services;
 
 import com.example.backend.dto.CreateBookingRequest;
+import com.example.backend.dto.CustomerBookingResponse;
+import com.example.backend.dto.ProviderBookingResponse;
 import com.example.backend.entity.Booking;
+import com.example.backend.entity.Listing;
 import com.example.backend.entity.ProviderAvailability;
+import com.example.backend.entity.User;
 import com.example.backend.enums.BookingStatus;
 import com.example.backend.enums.DayEnum;
 import com.example.backend.repositories.BookingRepository;
+import com.example.backend.repositories.ListingRepository;
 import com.example.backend.repositories.ProviderAvailabilityRepository;
+import com.example.backend.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +25,8 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final ProviderAvailabilityRepository providerAvailabilityRepository;
+    private final ListingRepository listingRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public Booking createBooking(Long customerId, CreateBookingRequest req) {
@@ -101,15 +109,65 @@ public class BookingService {
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
     }
 
-    public List<Booking> findByCustomerId(Long customerId) {
-        List<Booking>bookings = bookingRepository.findByCustomerId(customerId);
-                return  bookings;
+    public List<CustomerBookingResponse> getCustomerBookings(Long customerId) {
+
+        List<Booking> bookings = bookingRepository.findByCustomerId(customerId);
+
+        return bookings.stream().map(booking -> {
+
+            Listing listing = listingRepository
+                    .findById(booking.getListingId())
+                    .orElseThrow();
+
+            User provider = userRepository
+                    .findById(booking.getProviderId())
+                    .orElseThrow();
+
+            CustomerBookingResponse res = new CustomerBookingResponse();
+            res.setBookingId(booking.getId());
+            res.setServiceName(listing.getTitle());
+            res.setBookingDate(booking.getBookingDate());
+            res.setTimeSlot(booking.getTimeSlot());
+            res.setStatus(booking.getStatus().name());
+            res.setPrice(listing.getPrice());
+
+            res.setProviderId(provider.getId());
+            res.setProviderName(provider.getUserName());
+            res.setProviderAddress(provider.getPermanentAddress());
+
+            return res;
+        }).toList();
     }
 
-    public List<Booking> findByProviderId(Long providerId) {
-        List<Booking>bookings = bookingRepository.findByProviderId(providerId);
-        return  bookings;
+    public List<ProviderBookingResponse> getProviderBookings(Long providerId) {
+
+        List<Booking> bookings = bookingRepository.findByProviderId(providerId);
+
+        return bookings.stream().map(booking -> {
+
+            User customer = userRepository
+                    .findById(booking.getCustomerId())
+                    .orElseThrow();
+
+            Listing listing = listingRepository
+                    .findById(booking.getListingId())
+                    .orElseThrow();
+
+            ProviderBookingResponse res = new ProviderBookingResponse();
+            res.setBookingId(booking.getId());
+            res.setBookingDate(booking.getBookingDate());
+            res.setTimeSlot(booking.getTimeSlot());
+            res.setStatus(booking.getStatus().name());
+            res.setPrice(listing.getPrice());
+
+            res.setCustomerId(customer.getId());
+            res.setCustomerName(customer.getUserName());
+            res.setCustomerAddress(customer.getPermanentAddress());
+
+            return res;
+        }).toList();
     }
+
 
 
 }
