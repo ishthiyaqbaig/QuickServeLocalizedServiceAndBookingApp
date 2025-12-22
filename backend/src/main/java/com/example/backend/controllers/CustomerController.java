@@ -1,11 +1,5 @@
 package com.example.backend.controllers;
 
-<<<<<<< HEAD
-
-import com.example.backend.dto.BookingResponseDTO;
-
-=======
->>>>>>> 20728e8 (update)
 import com.example.backend.dto.CreateBookingRequest;
 import com.example.backend.entity.Booking;
 import com.example.backend.entity.Listing;
@@ -32,16 +26,8 @@ public class CustomerController {
     // Search
 
     @GetMapping("/search")
-<<<<<<< HEAD
-
-    public ResponseEntity<List<Listing>> searchNearest(@RequestParam Double lat, @RequestParam Double lng,
-            @RequestParam Long categoryId) {
-        System.out.print(lat + " " + lng + " " + categoryId);
-
-=======
     public ResponseEntity<List<Listing>> searchNearest(@RequestParam Double lat, @RequestParam Double lng, @RequestParam Long categoryId) {
         System.out.print(lat+" "+lng+" "+categoryId);
->>>>>>> 20728e8 (update)
         return ResponseEntity.ok(searchService.findNearestListings(lat, lng, categoryId));
     }
 
@@ -49,14 +35,8 @@ public class CustomerController {
     @PostMapping("/bookings/{customerId}")
     public ResponseEntity<Booking> createBooking(
             @PathVariable Long customerId,
-<<<<<<< HEAD
-
-            @RequestBody CreateBookingRequest req) {
-
-=======
             @RequestBody CreateBookingRequest req
     ) {
->>>>>>> 20728e8 (update)
         return ResponseEntity.ok(bookingService.createBooking(customerId, req));
     }
 
@@ -66,15 +46,9 @@ public class CustomerController {
     }
 
     @GetMapping("/bookings/{customerId}")
-<<<<<<< HEAD
-
-    public ResponseEntity<List<BookingResponseDTO>> myBookings(
-            @PathVariable Long customerId) {
-=======
     public ResponseEntity<List<Booking>> myBookings(
             @PathVariable Long customerId
     ) {
->>>>>>> 20728e8 (update)
         return ResponseEntity.ok(
                 bookingService.findByCustomerId(customerId)
         );
@@ -87,12 +61,7 @@ public class CustomerController {
             @RequestParam DayEnum day
     ) {
         return ResponseEntity.ok(
-<<<<<<< HEAD
-                providerAvailabilityService.getAvailability(providerId, day));
-
-=======
                 providerAvailabilityService.getAvailability(providerId, day)
         );
->>>>>>> 20728e8 (update)
     }
 }
