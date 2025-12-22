@@ -189,7 +189,7 @@ const ProviderProfile = () => {
 
               <h2 className="mt-4 text-xl font-semibold">{profile.name}</h2>
               <span className="text-xs text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
-                Customer
+                Service Provider
               </span>
             </CardContent>
           </Card>
