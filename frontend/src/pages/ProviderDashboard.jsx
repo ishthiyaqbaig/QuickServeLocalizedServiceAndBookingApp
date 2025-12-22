@@ -239,7 +239,7 @@ const ProviderDashboard = () => {
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
                                         <div className="flex items-center gap-2"><Calendar size={16} className="text-blue-500" /> {booking.bookingDate}</div>
                                         <div className="flex items-center gap-2"><Clock size={16} className="text-blue-500" /> {booking.timeSlot}</div>
-                                        <div className="flex items-center gap-2 font-bold text-blue-600 truncate">₹ {booking.price}</div>
+                                        <div className="flex items-center gap-2 font-bold text-blue-600 truncate">₹ {booking.price?booking.price:10000}</div>
                                         <div className="text-gray-400">ID: #{booking.id.toString().slice(-4)}</div>
                                     </div>
                                     <div className="mt-4 pt-4 border-t border-gray-50 flex flex-col gap-2">

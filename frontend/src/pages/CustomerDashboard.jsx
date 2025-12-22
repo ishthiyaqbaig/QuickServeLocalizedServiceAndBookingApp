@@ -329,13 +329,13 @@ const CustomerDashboard = () => {
                                 {myBookings.map(booking => (
                                     <div key={booking.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center hover:shadow-md transition-shadow">
                                         <div className="flex gap-4 items-center">
-                                            <div className={`p-3 rounded-xl ${booking.status === 'Confirmed' ? 'bg-green-50 text-green-600' :
-                                                booking.status === 'Pending' ? 'bg-yellow-50 text-yellow-600' :
-                                                    booking.status === 'Completed' ? 'bg-blue-50 text-blue-600' :
+                                            <div className={`p-3 rounded-xl ${booking.status === 'CONFIRMED' ? 'bg-green-50 text-green-600' :
+                                                booking.status === 'PENDING' ? 'bg-yellow-50 text-yellow-600' :
+                                                    booking.status === 'COMPLETED' ? 'bg-blue-50 text-blue-600' :
                                                         'bg-gray-50 text-gray-600'
                                                 }`}>
-                                                {booking.status === 'Confirmed' ? <CheckCircle size={24} /> :
-                                                    booking.status === 'Pending' ? <Clock size={24} /> :
+                                                {booking.status === 'CONFIRMED' ? <CheckCircle size={24} /> :
+                                                    booking.status === 'PENDING' ? <Clock size={24} /> :
                                                         <Calendar size={24} />}
                                             </div>
                                             <div>
@@ -350,23 +350,23 @@ const CustomerDashboard = () => {
                                                     <MapPin size={12} /> {booking.providerAddress || 'Provider Location'}
                                                 </div>
                                                 <div className="mt-3 flex items-center gap-2">
-                                                    <span className={`px-3 py-1 text-xs rounded-full font-bold uppercase tracking-wider ${booking.status === 'Confirmed' ? 'bg-green-100 text-green-700 border border-green-200' :
-                                                        booking.status === 'Pending' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
-                                                            booking.status === 'Completed' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
+                                                    <span className={`px-3 py-1 text-xs rounded-full font-bold uppercase tracking-wider ${booking.status === 'CONFIRMED' ? 'bg-green-100 text-green-700 border border-green-200' :
+                                                        booking.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
+                                                            booking.status === 'COMPLETED' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
                                                                 'bg-gray-100 text-gray-700 border border-gray-200'
                                                         }`}>
                                                         {booking.status}
                                                     </span>
-                                                    {booking.status === 'Pending' && <span className="text-[10px] text-gray-400 italic font-medium">Awaiting Provider Response</span>}
+                                                    {booking.status === 'PENDING' && <span className="text-[10px] text-gray-400 italic font-medium">Awaiting Provider Response</span>}
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="flex flex-col items-end gap-3">
                                             <div className="text-right">
                                                 <p className="text-xs text-gray-400 font-semibold mb-1">TOTAL PRICE</p>
-                                                <p className="font-extrabold text-blue-600 text-2xl">₹{booking.price}</p>
+                                                <p className="font-extrabold text-blue-600 text-2xl">₹{booking.price?booking.price:10000}</p>
                                             </div>
-                                            {booking.status === 'Pending' && (
+                                            {booking.status === 'PENDING' && (
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
