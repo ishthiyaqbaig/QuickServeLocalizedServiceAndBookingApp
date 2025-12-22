@@ -61,30 +61,11 @@ const ProviderDashboard = () => {
                 .then(data => {
                     setListings(Array.isArray(data) ? data : []);
                     const fetchedListings = Array.isArray(data) ? data : [];
-                    // DUMMY LISTING FOR TEST PURPOSES
-                    // const dummyListing = {
-                    //     id: 999,
-                    //     title: 'Sample: Deep Home Cleaning',
-                    //     price: 120,
-                    //     description: 'This is a test listing to demonstrate the UI layout. It helps verify how services appear.',
-                    //     images: 'https://images.unsplash.com/photo-1581578731117-104f2a41d95e?w=500&auto=format&fit=crop&q=60'
-                    // };
-                    // setListings([...fetchedListings, dummyListing]);
                     setLoading(false);
                 })
                 .catch(err => {
                     console.error("Failed to fetch listings", err);
                     setError("Could not load listings.");
-                    // On error, still show dummy listing
-                    // const dummyListing = {
-                    //     id: 999,
-                    //     title: 'Sample: Deep Home Cleaning',
-                    //     price: 120,
-                    //     description: 'This is a test listing (fallback).',
-                    //     images: 'https://images.unsplash.com/photo-1581578731117-104f2a41d95e?w=500&auto=format&fit=crop&q=60'
-                    // };
-                    // setListings([dummyListing]);
-                    // setError(null); // Suppress error for demo
                     setLoading(false);
                 });
         }
@@ -279,7 +260,8 @@ const ProviderDashboard = () => {
                                 </div>
 
                                 <div className="flex gap-2 w-full md:w-auto">
-                                    {booking.status === 'Pending' && (
+                                    {
+                                        booking.status === 'PENDING' && (
                                         <>
                                             <Button
                                                 className="flex-1 md:flex-none bg-green-600 hover:bg-green-700 text-white shadow-sm"
