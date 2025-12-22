@@ -1,6 +1,8 @@
 package com.example.backend.controllers;
 
+
 import com.example.backend.dto.BookingResponseDTO;
+
 import com.example.backend.dto.CreateBookingRequest;
 import com.example.backend.entity.Booking;
 import com.example.backend.entity.Listing;
@@ -27,9 +29,11 @@ public class CustomerController {
     // Search
 
     @GetMapping("/search")
+
     public ResponseEntity<List<Listing>> searchNearest(@RequestParam Double lat, @RequestParam Double lng,
             @RequestParam Long categoryId) {
         System.out.print(lat + " " + lng + " " + categoryId);
+
         return ResponseEntity.ok(searchService.findNearestListings(lat, lng, categoryId));
     }
 
@@ -37,7 +41,9 @@ public class CustomerController {
     @PostMapping("/bookings/{customerId}")
     public ResponseEntity<Booking> createBooking(
             @PathVariable Long customerId,
+
             @RequestBody CreateBookingRequest req) {
+
         return ResponseEntity.ok(bookingService.createBooking(customerId, req));
     }
 
@@ -47,6 +53,7 @@ public class CustomerController {
     }
 
     @GetMapping("/bookings/{customerId}")
+
     public ResponseEntity<List<BookingResponseDTO>> myBookings(
             @PathVariable Long customerId) {
         return ResponseEntity.ok(
@@ -60,5 +67,6 @@ public class CustomerController {
             @RequestParam DayEnum day) {
         return ResponseEntity.ok(
                 providerAvailabilityService.getAvailability(providerId, day));
+
     }
 }

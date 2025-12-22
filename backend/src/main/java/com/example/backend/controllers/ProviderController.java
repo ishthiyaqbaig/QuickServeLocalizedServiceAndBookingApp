@@ -1,7 +1,9 @@
 package com.example.backend.controllers;
 
 import com.example.backend.dto.AvailabilityRequest;
+
 import com.example.backend.dto.BookingResponseDTO;
+
 import com.example.backend.dto.CreateListingRequest;
 import com.example.backend.dto.RemoveSlotRequest;
 import com.example.backend.dto.UpdateListingRequest;
