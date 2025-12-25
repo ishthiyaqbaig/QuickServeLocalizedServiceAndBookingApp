@@ -43,6 +43,7 @@ public class WebSecurity {
                         .requestMatchers("/api/provider/**").hasRole("SERVICE_PROVIDER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/customer/**").hasRole("CUSTOMER")
+                        .requestMatchers("/api/user/notifications/**").hasAnyRole("ADMIN", "CUSTOMER", "SERVICE_PROVIDER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

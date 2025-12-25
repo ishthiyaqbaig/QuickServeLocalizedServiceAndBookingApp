@@ -19,6 +19,7 @@ public class ListingService {
     private final ListingRepository listingRepository;
     private final UserRepository userRepository;
     private final CloudinaryService cloudinaryService;
+    private final NotificationService notificationService;
 
     @Transactional
     public Listing createListing(Long providerId, CreateListingRequest request) {
@@ -39,6 +40,11 @@ public class ListingService {
         listing.setPrice(request.getPrice());
         listing.setImages(imageUrl);
         listing.setIsApproved(false); // admin must approve
+
+        notificationService.sendNotification(
+                1L, // assume ADMIN_ID = 1 for now
+                "New listing request received: '" + listing.getTitle() + "' needs approval."
+        );
 
         return listingRepository.save(listing);
     }
@@ -76,6 +82,20 @@ public class ListingService {
     public Listing setApproval(Long listingId, boolean approve) {
         Listing l = getListing(listingId);
         l.setIsApproved(approve);
+
+        if(approve)
+        {
+            notificationService.sendNotification(
+                    l.getProviderId(),
+                    "Your listing '" + l.getTitle() + "' has been APPROVED by Admin."
+            );
+        }else {
+            notificationService.sendNotification(
+                    l.getProviderId(),
+                    "Your listing '" + l.getTitle() + "' has been REJECTED by Admin."
+            );
+        }
+
         return listingRepository.save(l);
     }
 }

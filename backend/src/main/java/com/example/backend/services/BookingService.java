@@ -27,6 +27,7 @@ public class BookingService {
     private final ProviderAvailabilityRepository providerAvailabilityRepository;
     private final ListingRepository listingRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public Booking createBooking(Long customerId, CreateBookingRequest req) {
@@ -77,6 +78,12 @@ public class BookingService {
         }
 
         booking.setStatus(BookingStatus.CONFIRMED);
+
+        notificationService.sendNotification(
+                booking.getCustomerId(),
+                "Your booking on " + booking.getBookingDate() + " at " + booking.getTimeSlot() + " is CONFIRMED."
+        );
+
         return bookingRepository.save(booking);
     }
 
@@ -89,11 +96,17 @@ public class BookingService {
         }
 
         booking.setStatus(BookingStatus.COMPLETED);
+
+        notificationService.sendNotification(
+                booking.getCustomerId(),
+                "Your booking on " + booking.getBookingDate() + " at " + booking.getTimeSlot() + " is COMPLETED."
+        );
+
         return bookingRepository.save(booking);
     }
 
     // CUSTOMER / PROVIDER → CANCEL
-    public Booking cancelBooking(Long bookingId) {
+    public Booking cancelBooking(Long bookingId,String cancelledBy) {
         Booking booking = getBooking(bookingId);
 
         if (booking.getStatus() == BookingStatus.COMPLETED) {
@@ -101,6 +114,15 @@ public class BookingService {
         }
 
         booking.setStatus(BookingStatus.CANCELLED);
+
+        Long notifyUser = (cancelledBy.equals("Customer")) ? booking.getCustomerId() : booking.getProviderId();
+        String by = cancelledBy;
+
+        notificationService.sendNotification(
+                notifyUser,
+                "Your booking on " + booking.getBookingDate() + " at " + booking.getTimeSlot() + " was CANCELLED by " + by + "."
+        );
+
         return bookingRepository.save(booking);
     }
 

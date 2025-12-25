@@ -43,7 +43,7 @@ public class CustomerController {
 
     @PostMapping("/bookings/{bookingId}/cancel")
     public ResponseEntity<Booking> cancelBooking(@PathVariable Long bookingId) {
-        return ResponseEntity.ok(bookingService.cancelBooking(bookingId));
+        return ResponseEntity.ok(bookingService.cancelBooking(bookingId , "Customer"));
     }
 
     @GetMapping("/bookings/{customerId}")
