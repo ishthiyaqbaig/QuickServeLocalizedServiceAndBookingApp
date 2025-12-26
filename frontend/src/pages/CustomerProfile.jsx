@@ -152,7 +152,7 @@ const CustomerProfile = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <Navbar user={navbarUser} />
 
-      <div className="max-w-6xl mx-auto px-4 py-10 space-y-8">
+      <div className="max-w-6xl mx-auto px-4 pt-32 pb-10 space-y-8">
         {/* BACK */}
         <button
           onClick={() => navigate("/customer/dashboard")}

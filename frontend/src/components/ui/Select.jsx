@@ -1,33 +1,36 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { twMerge } from 'tailwind-merge'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { twMerge } from 'tailwind-merge';
+import { ChevronDown } from 'lucide-react';
 
-export function Select({ className, label, error, options = [], ...props }) {
+export const Select = ({ label, options, error, className = '', ...props }) => {
     return (
-        <div className="flex flex-col gap-1">
-            {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
-            <div className="relative">
+        <div className="flex flex-col gap-2 w-full">
+            {label && (
+                <label className="text-xs font-black text-gray-400 uppercase tracking-widest px-1">
+                    {label}
+                </label>
+            )}
+            <div className="relative group">
                 <select
                     className={twMerge(
-                        'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white',
-                        error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300',
+                        'w-full glass px-5 py-4 rounded-2xl appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500/20 border-white/60 transition-all font-medium text-gray-700 cursor-pointer',
+                        error ? 'border-rose-500 ring-2 ring-rose-500/10' : 'hover:border-indigo-400/50',
                         className
                     )}
                     {...props}
                 >
-                    {options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
+                    {options.map((opt) => (
+                        <option key={opt.value} value={opt.value} className="bg-white text-gray-900">
+                            {opt.label}
                         </option>
                     ))}
                 </select>
-                <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                    </svg>
+                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-indigo-500 transition-colors">
+                    <ChevronDown size={18} strokeWidth={3} />
                 </div>
             </div>
-            {error && <span className="text-xs text-red-500">{error}</span>}
+            {error && <span className="text-[10px] font-black text-rose-500 uppercase tracking-tighter px-1 mt-1">{error}</span>}
         </div>
     )
 }
@@ -39,5 +42,5 @@ Select.propTypes = {
     options: PropTypes.arrayOf(PropTypes.shape({
         value: PropTypes.string.isRequired,
         label: PropTypes.string.isRequired,
-    })),
+    })).isRequired,
 }

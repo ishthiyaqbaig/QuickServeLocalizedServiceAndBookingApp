@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 export const Label = ({ children, className = '', ...props }) => {
     return (
         <label
-            className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${className}`}
+            className={`text-xs font-black text-gray-400 uppercase tracking-widest px-1 ${className}`}
             {...props}
         >
             {children}
