@@ -1,381 +1,227 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
-import { Navbar } from '../components/layout/Navbar';
-
+import { Navbar } from '../components/layout/NavBar';
 import { searchProviders } from '../services/customerService';
 import { getCategories } from '../services/categoryService';
 import { getBookingsByCustomer, customerCancelBooking } from '../services/bookingService';
 import BookingModal from '../components/BookingModal';
-import { Calendar, Search, MapPin, Clock } from 'lucide-react';
+import { Calendar, Search, MapPin, Clock, ArrowRight, Star, CheckCircle } from 'lucide-react';
 
 const CustomerDashboard = () => {
     const navigate = useNavigate();
-
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(false);
-
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
-
     const [location, setLocation] = useState(null);
-    const [locationStatus, setLocationStatus] = useState('Fetching your location...');
-
-    // Booking State
+    const [locationStatus, setLocationStatus] = useState('Fetching location...');
     const [bookingModalOpen, setBookingModalOpen] = useState(false);
     const [selectedServiceForBooking, setSelectedServiceForBooking] = useState(null);
-
-    // Dashboard Tabs
     const [activeTab, setActiveTab] = useState('search');
     const [myBookings, setMyBookings] = useState([]);
     const [loadingBookings, setLoadingBookings] = useState(false);
 
-    // MOCK DATA
-    const DUMMY_SERVICES = [
-        {
-            id: 1,
-            title: "Deep House Cleaning",
-            description: "Professional deep cleaning for your home.",
-            price: 1500,
-            categoryId: 1,
-            images: "https://images.unsplash.com/photo-1581578731117-104f2a41d95e?auto=format&fit=crop&q=80&w=1000",
-            distance: 2.5,
-            providerId: 101 // Mock provider
-        },
-        {
-            id: 2,
-            title: "Plumbing Repair",
-            description: "Fixing leaks, clogs, and pipe issues.",
-            price: 500,
-            categoryId: 2,
-            images: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&q=80&w=1000",
-            distance: 0.8,
-            providerId: 102
-        }
-    ];
-
-    // DEBUG: Logs to verify file update and mounting
-    useEffect(() => {
-        console.log("CustomerDashboard Mounted. Active Tab:", activeTab);
-    }, [activeTab]);
-
-    // 🔹 LOGOUT HANDLER
     const handleLogout = () => {
         localStorage.clear();
         navigate('/');
     };
 
-    // 🔹 GET USER LOCATION
     const getLocation = () => {
         setLocationStatus("Fetching location...");
-
         if (!navigator.geolocation) {
-            setLocationStatus("Geolocation not supported by your browser.");
+            setLocationStatus("Not supported");
             return;
         }
-
         navigator.geolocation.getCurrentPosition(
             (pos) => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-
-                setLocation({ lat, lng });
-                setLocationStatus("Location detected!");
+                setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+                setLocationStatus("Located");
             },
-            (err) => {
-                console.error(err);
-                setLocationStatus("Location access denied.");
-            }
+            () => setLocationStatus("Access denied")
         );
     };
 
-    // 🔹 SEARCH NEARBY PROVIDERS
     const handleSearch = async () => {
-        if (!location) {
-            alert("Please enable location first.");
-            return;
-        }
-        if (!selectedCategory) {
-            alert("Please select a category.");
-            return;
-        }
-
+        if (!location) { alert("Enable location first"); return; }
+        if (!selectedCategory) { alert("Select a category"); return; }
         setLoading(true);
         try {
             const data = await searchProviders(location.lat, location.lng, selectedCategory);
             setServices(data);
         } catch (err) {
             console.error(err);
-            console.warn("API failed, using dummy data");
-            setServices(DUMMY_SERVICES); // Fallback to dummy
-            // alert("Search failed"); // Don't alert for demo
         } finally {
             setLoading(false);
         }
     };
 
-    // ⭐ Fetch categories + user location on mount
     useEffect(() => {
-        // fetch categories
-        getCategories()
-            .then(data => {
-                setCategories(data);
-            })
-            .catch(err => console.error("Failed to fetch categories", err));
-
-        // get location automatically
+        getCategories().then(setCategories).catch(console.error);
         getLocation();
     }, []);
 
-    const user = {
-        name: localStorage.getItem("userName") || "Customer",
-        role: "CUSTOMER",
-        id: localStorage.getItem("userId")
-    };
+    const userId = localStorage.getItem("userId");
+    const userName = localStorage.getItem("userName") || "Customer";
 
-    // 🔹 FETCH MY BOOKINGS
     useEffect(() => {
-        if (activeTab === 'bookings' && user.id) {
+        if (activeTab === 'bookings' && userId) {
             setLoadingBookings(true);
-            getBookingsByCustomer(user.id)
+            getBookingsByCustomer(userId)
                 .then(data => setMyBookings(data || []))
-                .catch(err => console.error("Failed to load bookings", err))
+                .catch(console.error)
                 .finally(() => setLoadingBookings(false));
         }
-    }, [activeTab, user.id]);
+    }, [activeTab, userId]);
 
     const handleCancelBooking = async (bookingId) => {
-        if (window.confirm("Are you sure you want to cancel this booking?")) {
+        if (window.confirm("Cancel this booking?")) {
             try {
                 await customerCancelBooking(bookingId);
-                setMyBookings(myBookings.map(b =>
-                    b.id === bookingId ? { ...b, status: 'Cancelled' } : b
-                ));
+                setMyBookings(myBookings.map(b => b.id === bookingId ? { ...b, status: 'Cancelled' } : b));
             } catch (err) {
-                alert("Failed to cancel booking. Only PENDING bookings can be cancelled by customers.");
+                alert("Only PENDING bookings can be cancelled.");
             }
         }
     };
 
-    const handleOpenBooking = (service) => {
-        setSelectedServiceForBooking(service);
-        setBookingModalOpen(true);
-    };
-
-    const getCategoryName = (id) => {
-        const cat = categories.find(c => c.id === id);
-        return cat ? cat.name : `Category ${id}`;
-    };
+    const getCategoryName = (id) => categories.find(c => c.id === id)?.name || `Category ${id}`;
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <Navbar user={user} onLogout={handleLogout} />
+        <div className="min-h-screen">
+            <Navbar showAuthButtons={false} onLogout={handleLogout} />
 
-            <main className="max-w-6xl mx-auto px-4 py-8">
-
-                <h1 className="text-3xl font-bold text-gray-900 mb-8">Customer Dashboard</h1>
-
-                {/* TABS & SEARCH BAR CONTAINER */}
-                <div className="relative z-20">
-                    <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6 mb-10 border border-gray-100">
-                        {/* TABS */}
-                        <div className="flex gap-4 mb-6 p-1 bg-gray-50 rounded-xl w-fit">
-                            <button
-                                onClick={() => setActiveTab('search')}
-                                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === 'search' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-                                    }`}
-                            >
-                                <Search size={16} /> Find Services
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('bookings')}
-                                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === 'bookings' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-                                    }`}
-                            >
-                                <Calendar size={16} /> My Bookings
-                            </button>
-                        </div>
-
-                        {/* SEARCH BAR */}
-                        {activeTab === 'search' && (
-                            <div className="flex flex-col md:flex-row items-stretch gap-4">
-                                {/* CATEGORY */}
-                                <div className="flex-[2] relative">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10">
-                                        <Search size={20} />
-                                    </div>
-                                    <select
-                                        className="w-full pl-12 pr-4 h-14 bg-gray-50 border-gray-200 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all appearance-none text-gray-700 font-medium"
-                                        value={selectedCategory}
-                                        onChange={(e) => setSelectedCategory(e.target.value)}
-                                    >
-                                        <option value="" disabled>Select a category...</option>
-                                        {categories.map(c => (
-                                            <option key={c.id} value={c.id}>{c.name}</option>
-                                        ))}
-                                    </select>
-                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                {/* LOCATION STATUS */}
-                                <div className="flex-1 flex items-center gap-3 px-4 h-14 bg-gray-50 border border-gray-200 rounded-xl text-gray-600">
-                                    <MapPin size={20} className={location ? "text-green-500" : "text-gray-400"} />
-                                    <span className="text-sm font-medium truncate">
-                                        {locationStatus}
-                                    </span>
-                                </div>
-
-                                {/* SEARCH BUTTON */}
-                                <Button
-                                    onClick={handleSearch}
-                                    disabled={loading}
-                                    className="h-14 px-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5"
-                                >
-                                    {loading ? (
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                                            <span>Searching...</span>
-                                        </div>
-                                    ) : (
-                                        "Search Near Me"
-                                    )}
-                                </Button>
-                            </div>
-                        )}
-                    </div>
+            <main className="max-w-7xl mx-auto px-4 py-32">
+                <div className="mb-12">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+                        Hello, <span className="text-gradient">{userName}</span>
+                    </h1>
+                    <p className="text-gray-500 text-lg">Find the best local experts or manage your bookings.</p>
                 </div>
 
-                {/* SEARCH TAB CONTENT - RESULTS ONLY */}
-                {activeTab === 'search' && (
-                    <>
-                        {/* RESULTS */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* TABS CONTROLLER */}
+                <div className="flex gap-2 p-1.5 glass rounded-2xl w-fit mb-12 shadow-inner">
+                    <button
+                        onClick={() => setActiveTab('search')}
+                        className={`flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === 'search' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'text-gray-500 hover:text-indigo-600 hover:bg-white/50'}`}
+                    >
+                        <Search size={18} /> Find Services
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('bookings')}
+                        className={`flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === 'bookings' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'text-gray-500 hover:text-indigo-600 hover:bg-white/50'}`}
+                    >
+                        <Calendar size={18} /> My Bookings
+                    </button>
+                </div>
 
+                {activeTab === 'search' && (
+                    <div className="space-y-12">
+                        {/* SEARCH PANEL */}
+                        <div className="glass p-4 rounded-3xl shadow-2xl flex flex-col lg:flex-row gap-4">
+                            <div className="flex-[2] relative group">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-600 transition-colors" />
+                                <select
+                                    className="w-full pl-12 pr-4 h-16 bg-white/40 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all appearance-none text-gray-700 font-bold text-lg cursor-pointer"
+                                    value={selectedCategory}
+                                    onChange={(e) => setSelectedCategory(e.target.value)}
+                                >
+                                    <option value="" disabled>What service are you looking for?</option>
+                                    {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                </select>
+                            </div>
+                            <div className="flex-1 flex items-center gap-3 px-6 h-16 bg-white/40 rounded-2xl border-none">
+                                <MapPin size={22} className={location ? "text-indigo-600" : "text-gray-400"} />
+                                <span className="text-gray-600 font-bold">{locationStatus}</span>
+                            </div>
+                            <Button size="lg" onClick={handleSearch} disabled={loading} className="h-16 px-12 rounded-2xl text-xl">
+                                {loading ? "Searching..." : "Search"}
+                            </Button>
+                        </div>
+
+                        {/* SEARCH RESULTS */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {services.length === 0 && !loading && (
-                                <div className="col-span-full text-center text-gray-400 py-10">
-                                    No services found. Try selecting a different category.
+                                <div className="col-span-full py-20 glass rounded-[2.5rem] text-center border-dashed">
+                                    <Search size={48} className="mx-auto text-gray-300 mb-4" />
+                                    <p className="text-gray-400 font-bold text-xl">Search results will appear here</p>
                                 </div>
                             )}
-
                             {services.map(service => (
-                                <div
-                                    key={service.id}
-                                    className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition"
-                                >
-                                    {/* IMAGE */}
-                                    <div className="h-48 bg-gray-200">
-                                        <img
-                                            src={service.images}
-                                            alt={service.title}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-
-                                    <div className="p-6">
-                                        <span className="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-semibold rounded-full">
-                                            {getCategoryName(service.categoryId)}
-                                        </span>
-
-                                        <h3 className="text-xl font-bold mt-3">{service.title}</h3>
-
-                                        <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                                            {service.description}
-                                        </p>
-
-                                        <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
-                                            <MapPin size={16} />
-                                            {service.distance
-                                                ? `${service.distance.toFixed(1)} km away`
-                                                : "Nearby"}
+                                <div key={service.id} className="glass group overflow-hidden rounded-[2rem] transition-all duration-500 hover:scale-[1.02]">
+                                    <div className="h-56 overflow-hidden relative">
+                                        <img src={service.images} alt={service.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                        <div className="absolute top-4 left-4">
+                                            <span className="px-4 py-1.5 bg-white/90 backdrop-blur-sm text-indigo-600 text-[10px] font-black rounded-full uppercase tracking-widest shadow-lg">
+                                                {getCategoryName(service.categoryId)}
+                                            </span>
                                         </div>
-
-                                        <div className="flex justify-between items-center border-t pt-4">
+                                    </div>
+                                    <div className="p-8">
+                                        <h3 className="text-2xl font-black text-gray-900 mb-3">{service.title}</h3>
+                                        <p className="text-gray-500 text-sm line-clamp-2 mb-6 font-medium leading-relaxed">{service.description}</p>
+                                        <div className="flex items-center gap-2 text-indigo-600/70 text-xs font-black uppercase tracking-tighter mb-6 bg-indigo-50/50 w-fit px-3 py-1.5 rounded-lg border border-indigo-100">
+                                            <MapPin size={14} /> {service.distance ? `${service.distance.toFixed(1)} km away` : "Nearby"}
+                                        </div>
+                                        <div className="flex justify-between items-center bg-gray-50/50 p-5 rounded-2xl border border-white/40 shadow-inner">
                                             <div>
-                                                <p className="text-xs text-gray-500">Price</p>
-                                                <p className="text-lg font-bold text-blue-600">₹{service.price}</p>
+                                                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Starting Price</p>
+                                                <p className="text-2xl font-black text-indigo-600 tracking-tight">₹{service.price}</p>
                                             </div>
-
-                                            <Button onClick={() => handleOpenBooking(service)}>Book Now</Button>
+                                            <Button onClick={() => { setSelectedServiceForBooking(service); setBookingModalOpen(true); }} className="shadow- indigo-200">Book Now</Button>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    </>
+                    </div>
                 )}
 
-                {/* BOOKINGS TAB CONTENT */}
                 {activeTab === 'bookings' && (
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                         {loadingBookings ? (
-                            <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-                                <div className="w-8 h-8 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin mb-4" />
-                                <p>Loading your bookings...</p>
+                            <div className="flex flex-col items-center justify-center py-32 glass rounded-[2.5rem]">
+                                <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin mb-6" />
+                                <p className="font-bold text-gray-400">Loading bookings...</p>
                             </div>
                         ) : myBookings.length === 0 ? (
-                            <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-200">
-                                <Calendar size={48} className="mx-auto text-gray-300 mb-4" />
-                                <h3 className="text-lg font-semibold text-gray-900">No upcoming bookings</h3>
-                                <p className="text-gray-500 max-w-xs mx-auto mt-2">
-                                    When you book a service, it will appear here for you to track.
-                                </p>
+                            <div className="text-center py-32 glass rounded-[3rem] border-dashed">
+                                <Calendar size={64} className="mx-auto text-gray-200 mb-6" />
+                                <h3 className="text-2xl font-black text-gray-900">No active bookings</h3>
+                                <p className="text-gray-500 mt-2 font-medium">Your scheduled services will appear here.</p>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 {myBookings.map(booking => (
-                                    <div key={booking.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center hover:shadow-md transition-shadow">
-                                        <div className="flex gap-4 items-center">
-                                            <div className={`p-3 rounded-xl ${booking.status === 'CONFIRMED' ? 'bg-green-50 text-green-600' :
-                                                booking.status === 'PENDING' ? 'bg-yellow-50 text-yellow-600' :
-                                                    booking.status === 'COMPLETED' ? 'bg-blue-50 text-blue-600' :
-                                                        'bg-gray-50 text-gray-600'
-                                                }`}>
-                                                {booking.status === 'CONFIRMED' ? <CheckCircle size={24} /> :
-                                                    booking.status === 'PENDING' ? <Clock size={24} /> :
-                                                        <Calendar size={24} />}
+                                    <div key={booking.id} className="glass p-8 rounded-[2.5rem] flex flex-col md:flex-row justify-between items-start md:items-center gap-6 hover:shadow-2xl transition-all duration-500 border-white/60">
+                                        <div className="flex gap-6 items-center">
+                                            <div className={`p-5 rounded-2xl shadow-lg ${booking.status === 'CONFIRMED' ? 'bg-emerald-50 text-emerald-600 shadow-emerald-100' : booking.status === 'PENDING' ? 'bg-amber-50 text-amber-600 shadow-amber-100' : booking.status === 'COMPLETED' ? 'bg-indigo-50 text-indigo-600 shadow-indigo-100' : 'bg-gray-100 text-gray-400'}`}>
+                                                {booking.status === 'CONFIRMED' ? <CheckCircle size={32} /> : booking.status === 'PENDING' ? <Clock size={32} /> : <Calendar size={32} />}
                                             </div>
                                             <div>
-                                                <h3 className="font-bold text-gray-900 text-lg">{booking.serviceName || 'Service Name'}</h3>
-                                                <div className="text-sm text-gray-600 font-medium">
-                                                    Provider: {booking.providerName || 'N/A'}
-                                                </div>
-                                                <div className="text-sm text-gray-500 flex items-center gap-2 mt-1 font-medium">
-                                                    <Calendar size={14} /> {booking.bookingDate} at {booking.timeSlot}
-                                                </div>
-                                                <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                                                    <MapPin size={12} /> {booking.providerAddress || 'Provider Location'}
-                                                </div>
-                                                <div className="mt-3 flex items-center gap-2">
-                                                    <span className={`px-3 py-1 text-xs rounded-full font-bold uppercase tracking-wider ${booking.status === 'CONFIRMED' ? 'bg-green-100 text-green-700 border border-green-200' :
-                                                        booking.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
-                                                            booking.status === 'COMPLETED' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
-                                                                'bg-gray-100 text-gray-700 border border-gray-200'
-                                                        }`}>
-                                                        {booking.status}
-                                                    </span>
-                                                    {booking.status === 'PENDING' && <span className="text-[10px] text-gray-400 italic font-medium">Awaiting Provider Response</span>}
+                                                <h3 className="font-black text-gray-900 text-xl mb-1">{booking.serviceName}</h3>
+                                                <p className="text-indigo-600 font-bold text-sm mb-3">with {booking.providerName}</p>
+                                                <div className="flex flex-wrap gap-4">
+                                                    <div className="flex items-center gap-2 text-xs font-bold text-gray-500">
+                                                        <Calendar size={14} className="text-indigo-400" /> {booking.bookingDate}
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-xs font-bold text-gray-500">
+                                                        <Clock size={14} className="text-indigo-400" /> {booking.timeSlot}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="flex flex-col items-end gap-3">
+                                        <div className="flex flex-col items-end gap-4 w-full md:w-auto mt-4 md:mt-0 pt-6 md:pt-0 border-t md:border-t-0 border-white/40">
                                             <div className="text-right">
-                                                <p className="text-xs text-gray-400 font-semibold mb-1">TOTAL PRICE</p>
-                                                <p className="font-extrabold text-blue-600 text-2xl">₹{booking.price?booking.price:10000}</p>
+                                                <p className="text-[10px] text-gray-400 font-black tracking-widest mb-1">BOOKING AMOUNT</p>
+                                                <p className="font-black text-indigo-600 text-3xl tracking-tighter">₹{booking.price || 0}</p>
                                             </div>
-                                            {booking.status === 'PENDING' && (
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    className="text-red-600 hover:bg-red-50 border-red-100"
-                                                    onClick={() => handleCancelBooking(booking.id)}
-                                                >
-                                                    Cancel Request
-                                                </Button>
-                                            )}
+                                            <div className="flex items-center gap-3">
+                                                <span className={`px-4 py-1.5 text-[10px] rounded-full font-black uppercase tracking-widest border ${booking.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : booking.status === 'PENDING' ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+                                                    {booking.status}
+                                                </span>
+                                                {booking.status === 'PENDING' && <Button variant="outline" size="sm" onClick={() => handleCancelBooking(booking.id)} className="text-rose-600 border-rose-100 bg-rose-50/30 hover:bg-rose-50 text-xs font-black px-4 h-9">Cancel</Button>}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -384,12 +230,11 @@ const CustomerDashboard = () => {
                     </div>
                 )}
 
-                {/* BOOKING MODAL */}
                 <BookingModal
                     isOpen={bookingModalOpen}
                     onClose={() => setBookingModalOpen(false)}
                     service={selectedServiceForBooking}
-                    userId={user.id}
+                    userId={userId}
                 />
             </main>
         </div>

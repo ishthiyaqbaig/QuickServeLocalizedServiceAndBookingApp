@@ -7,66 +7,65 @@ import appScreenshots from "../assets/img/app-screenshots.png";
 import playStore from "../assets/img/google.png";
 import appStore from "../assets/img/Apple.png";
 import services from "../assets/home_services_illustration.png";
-import { Navbar } from '../components/layout/Navbar';
+import { Navbar } from '../components/layout/NavBar';
 import OfflineStruggleSection from '../components/layout/OfflineStruggleSection';
 import SmartFeaturesSection from '../components/layout/SmartFeaturesSection';
 
 const CATEGORIES = [
-    { id: 'plumbing', label: 'Plumbing', icon: Wrench, color: 'bg-blue-100 text-blue-600' },
-    { id: 'electrical', label: 'Electrical', icon: Zap, color: 'bg-yellow-100 text-yellow-600' },
-    { id: 'cleaning', label: 'Cleaning', icon: Home, color: 'bg-green-100 text-green-600' },
+    { id: 'plumbing', label: 'Plumbing', icon: Wrench, color: 'bg-indigo-100 text-indigo-600' },
+    { id: 'electrical', label: 'Electrical', icon: Zap, color: 'bg-amber-100 text-amber-600' },
+    { id: 'cleaning', label: 'Cleaning', icon: Home, color: 'bg-emerald-100 text-emerald-600' },
     { id: 'tutoring', label: 'Tutoring', icon: BookOpen, color: 'bg-purple-100 text-purple-600' },
     { id: 'moving', label: 'Moving', icon: Truck, color: 'bg-orange-100 text-orange-600' },
-    { id: 'gardening', label: 'Gardening', icon: Scissors, color: 'bg-emerald-100 text-emerald-600' },
+    { id: 'gardening', label: 'Gardening', icon: Scissors, color: 'bg-rose-100 text-rose-600' },
 ]
 
 export default function LandingPage() {
     return (
-        <div className="min-h-screen bg-white">
-            {/* Navigation */}
-            {/* Navigation */}
+        <div className="min-h-screen">
             <Navbar />
 
             {/* Hero Section */}
-            <div className="relative bg-gray-900 text-white overflow-hidden">
-                <div className="absolute inset-0">
+            <div className="relative overflow-hidden pt-32 pb-24 lg:pt-48 lg:pb-40">
+                <div className="absolute inset-0 -z-10">
                     <img
                         src={banner}
-                        alt="Local Services"
-                        className="w-full h-full object-cover opacity-40"
+                        alt="Background"
+                        className="w-full h-full object-cover opacity-10"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-indigo-50/50 via-transparent to-transparent" />
                 </div>
 
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-                    <div className="max-w-3xl">
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-                            Find the perfect professional for your needs
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center max-w-4xl mx-auto mb-16">
+                        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-tight">
+                            Find the <span className="text-gradient">Perfect Expert</span> <br />
+                            for Every Task
                         </h1>
-                        <p className="text-xl text-gray-300 mb-8 max-w-2xl">
-                            Connect with trusted local experts for plumbing, cleaning, tutoring, and more.
-                            Book instantly and get the job done right.
+                        <p className="text-xl md:text-2xl text-gray-600 mb-12 leading-relaxed">
+                            Connecting you with trusted local professionals for everything from home repairs to tutoring.
+                            Simple, fast, and secure.
                         </p>
 
-                        <div className="bg-white p-2 rounded-xl shadow-lg max-w-2xl flex flex-col sm:flex-row gap-2">
-                            <div className="flex-1 relative">
-                                <Search className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                        <div className="glass p-3 rounded-2xl shadow-2xl max-w-3xl mx-auto flex flex-col md:flex-row gap-3">
+                            <div className="flex-[2] relative group">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-600 transition-colors w-5 h-5" />
                                 <input
                                     type="text"
                                     placeholder="What service do you need?"
-                                    className="w-full pl-10 pr-4 py-3 rounded-lg text-gray-900 focus:outline-none"
+                                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-gray-50/50 border-none focus:ring-2 focus:ring-indigo-500/50 focus:bg-white transition-all outline-none text-lg"
                                 />
                             </div>
-                            <div className="flex-1 relative border-t sm:border-t-0 sm:border-l border-gray-200">
-                                <MapPin className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                            <div className="flex-1 relative group md:border-l border-gray-200">
+                                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-600 transition-colors w-5 h-5" />
                                 <input
                                     type="text"
-                                    placeholder="Zip Code or City"
-                                    className="w-full pl-10 pr-4 py-3 rounded-lg text-gray-900 focus:outline-none"
+                                    placeholder="Location"
+                                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-gray-50/50 md:bg-transparent border-none focus:ring-2 focus:ring-indigo-500/50 focus:bg-white transition-all outline-none text-lg"
                                 />
                             </div>
-                            <Button className="mt-1 py-5 px-8 text-lg">
-                                Search
+                            <Button size="lg" className="md:w-auto w-full shadow-indigo-200">
+                                Search Now
                             </Button>
                         </div>
                     </div>
@@ -74,11 +73,16 @@ export default function LandingPage() {
             </div>
 
             {/* Categories Section */}
-            <div className="py-20 bg-gray-50">
+            <div className="py-24">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-900">Popular Services</h2>
-                        <p className="mt-4 text-gray-600">Explore our most requested service categories</p>
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
+                        <div className="max-w-xl">
+                            <h2 className="text-4xl font-bold mb-4">Popular <span className="text-gradient">Categories</span></h2>
+                            <p className="text-lg text-gray-600">Explore our most requested services and book your expert today.</p>
+                        </div>
+                        <Button variant="ghost" className="hidden md:flex">
+                            View all categories <ArrowRight size={18} className="ml-2" />
+                        </Button>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
@@ -87,154 +91,151 @@ export default function LandingPage() {
                             return (
                                 <div
                                     key={category.id}
-                                    className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer group text-center"
+                                    className="glass p-8 rounded-2xl hover:bg-white transition-all duration-500 cursor-pointer group text-center hover:scale-105"
                                 >
-                                    <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4 ${category.color} group-hover:scale-110 transition-transform`}>
-                                        <Icon size={24} />
+                                    <div className={`w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-6 ${category.color} group-hover:scale-110 transition-transform duration-500 shadow-sm`}>
+                                        <Icon size={32} />
                                     </div>
-                                    <h3 className="font-medium text-gray-900">{category.label}</h3>
+                                    <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors uppercase tracking-wider text-sm">{category.label}</h3>
                                 </div>
                             )
                         })}
                     </div>
                 </div>
             </div>
-            
-            {/* Smart Features Section */}
-            <SmartFeaturesSection/>
 
-            {/* Download on Android/ios Section */}
-            <div className='py-20'>
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="grid md:grid-cols-2 gap-12 items-center">
-                        <div>
-                            <div class="text-center">
-                                <img
-                                    src={appScreenshots}
-                                    alt="App Screenshots"
-                                    className="max-w-80% align-middle"
-                                />
+            <SmartFeaturesSection />
+
+            {/* Download Section */}
+            <div className='py-32 overflow-hidden'>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="glass p-12 md:p-20 rounded-[3rem] relative overflow-hidden">
+                        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
+                        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
+
+                        <div className="grid md:grid-cols-2 gap-16 items-center relative z-10">
+                            <div className="order-2 md:order-1">
+                                <div className="inline-block px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-bold mb-6">MOBILE APP</div>
+                                <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-tight">Find Best Offers <br /><span className="text-gradient">On The Go</span></h2>
+                                <p className="text-lg text-gray-600 mb-10 leading-relaxed">
+                                    Manage your bookings, chat with professionals, and get real-time updates directly from your phone.
+                                    Available now for iOS and Android.
+                                </p>
+                                <div className="flex flex-wrap gap-4">
+                                    <a href="#" className="hover:scale-105 transition-transform duration-300">
+                                        <img src={playStore} alt="Play Store" className="h-14" />
+                                    </a>
+                                    <a href="#" className="hover:scale-105 transition-transform duration-300">
+                                        <img src={appStore} alt="App Store" className="h-14" />
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                        <div class="mb-6">
-                            <h2 class="mb-12 mt-0 font-medium leading-snug text-[calc(1.325rem+.9vw)]">Find best offers in your area</h2>
-                            <p class="text-gray-600 mb-6 mt-0">Manage your offers, customers, and success from your phone - anywhere, anytime. Designed to be simple, elegant, and powerful for todays multitasking platform.</p>
-                            <p class="text-gray-600 mb-6 mt-0">Download on Android/ios.</p>
-                            <div class="flex mb-6 image-shadow app-link">
-                                <a href="#" target="_blank" class="mr-4">                                    
-                                    <img
-                                        src={playStore}
-                                        alt="Play Store"
-                                        className="w-[180px] align-middle object-contain"
-                                    />
-                                </a>
-                                <a href="#" target="_blank" class="">                                    
-                                    <img
-                                        src={appStore}
-                                        alt="App Store"
-                                        className="w-[180px] align-middle object-contain"
-                                    />
-                                </a>
+                            <div className="order-1 md:order-2 flex justify-center">
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-3xl scale-110 -z-10" />
+                                    <img src={appScreenshots} alt="App Screenshots" className="max-w-md w-full drop-shadow-2xl" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/*  */}
-            <OfflineStruggleSection/>
+            <OfflineStruggleSection />
 
-            {/* Features / How it works */}
-            <div className="py-20">
+            {/* Features */}
+            <div className="py-32">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid md:grid-cols-2 gap-12 items-center">
-                        <div>
-                            <h2 className="text-3xl font-bold text-gray-900 mb-6">Why choose Quick Serve?</h2>
-                            <div className="space-y-8">
-                                <div className="flex gap-4">
-                                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <Star className="text-blue-600 w-6 h-6" />
+                    <div className="glass rounded-[3rem] overflow-hidden">
+                        <div className="grid md:grid-cols-2">
+                            <div className="p-12 md:p-20">
+                                <h2 className="text-4xl font-bold mb-10 leading-tight">Why Choose <br /><span className="text-gradient">Quick Serve?</span></h2>
+                                <div className="space-y-12">
+                                    <div className="flex gap-6 group">
+                                        <div className="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 transition-colors duration-500 group-hover:scale-110">
+                                            <Star className="text-indigo-600 group-hover:text-white transition-colors w-7 h-7" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-2xl font-bold mb-2">Verified Professionals</h3>
+                                            <p className="text-lg text-gray-600">Every service provider is vetted and reviewed for your peace of mind.</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 className="text-xl font-semibold mb-2">Verified Professionals</h3>
-                                        <p className="text-gray-600">Every service provider is vetted and reviewed to ensure high-quality service.</p>
+                                    <div className="flex gap-6 group">
+                                        <div className="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 transition-colors duration-500 group-hover:scale-110">
+                                            <Zap className="text-indigo-600 group-hover:text-white transition-colors w-7 h-7" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-2xl font-bold mb-2">Instant Booking</h3>
+                                            <p className="text-lg text-gray-600">Book appointments in seconds based on real-time availability.</p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="flex gap-4">
-                                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <Zap className="text-blue-600 w-6 h-6" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-semibold mb-2">Instant Booking</h3>
-                                        <p className="text-gray-600">Book appointments instantly based on real-time availability.</p>
-                                    </div>
+                                <div className="mt-16">
+                                    <Link to="/signup">
+                                        <Button size="lg" className="px-10">
+                                            Get Started Now <ArrowRight size={20} className="ml-2" />
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
-                            <div className="mt-8">
-                                <Link to="/signup">
-                                    <Button className="px-4 py-3">
-                                        Get Started <ArrowRight size={16} />
-                                    </Button>
-                                </Link>
+                            <div className="bg-indigo-600/10 p-12 flex items-center justify-center">
+                                <img
+                                    src={services}
+                                    alt="Services"
+                                    className="w-full max-w-lg drop-shadow-2xl rounded-3xl"
+                                />
                             </div>
-                        </div>
-                        <div className="bg-gray-100 rounded-2xl p-8 h-96 flex items-center justify-center">
-                            <img
-                                src={services}
-                                alt="Local Services"
-                                className="w-full h-full object-cover rounded-2xl"
-                            />
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Footer */}
-            <footer className="bg-gray-900 text-gray-400 py-12">
+            <footer className="footer-glass py-24 mb-12 mx-4 border-t border-white/20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid md:grid-cols-4 gap-8">
-                        <div>
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                                    <MapPin className="text-white w-5 h-5" />
+                    <div className="grid md:grid-cols-4 gap-16">
+                        <div className="col-span-1 md:col-span-1">
+                            <div className="flex items-center gap-3 mb-8">
+                                <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
+                                    <MapPin className="text-white w-6 h-6" />
                                 </div>
-                                <span className="text-xl font-bold text-white">Quick Serve</span>
+                                <span className="text-2xl font-bold text-gray-900 tracking-tight">Quick Serve</span>
                             </div>
-                            <p className="text-sm">Connecting you with the best local professionals.</p>
-                        </div>
-                        <div>
-                            <h4 className="text-white font-semibold mb-4">Company</h4>
-                            <ul className="space-y-2 text-sm">
-                                <li>About Us</li>
-                                <li>Careers</li>
-                                <li>Press</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="text-white font-semibold mb-4">Support</h4>
-                            <ul className="space-y-2 text-sm">
-                                <li>Help Center</li>
-                                <li>Safety</li>
-                                <li>Terms of Service</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="text-white font-semibold mb-4">Follow Us</h4>
+                            <p className="text-gray-500 leading-relaxed mb-8">
+                                The most trusted platform for finding local experts and getting things done efficiently.
+                            </p>
                             <div className="flex gap-4">
-                                <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
-                                    <Instagram className="w-5 h-5 text-white" />
-                                </a>
-                                <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
-                                    <Twitter className="w-5 h-5 text-white" />
-                                </a>
-                                <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
-                                    <Linkedin className="w-5 h-5 text-white" />
-                                </a>
+                                {[Instagram, Twitter, Linkedin].map((Icon, i) => (
+                                    <a key={i} href="#" className="w-12 h-12 glass rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all duration-300 hover:-translate-y-1">
+                                        <Icon size={20} />
+                                    </a>
+                                ))}
                             </div>
                         </div>
-                    </div>
-                    <div className="border-t border-gray-800 mt-12 pt-8 text-sm text-center">
-                        © 2025 QuickServe. All rights reserved.
+                        <div>
+                            <h4 className="font-bold text-gray-900 mb-8 uppercase tracking-widest text-xs">Platform</h4>
+                            <ul className="space-y-4 text-gray-500">
+                                <li className="hover:text-indigo-600 transition-colors cursor-pointer">Find Services</li>
+                                <li className="hover:text-indigo-600 transition-colors cursor-pointer">Become a Provider</li>
+                                <li className="hover:text-indigo-600 transition-colors cursor-pointer">How it Works</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 className="font-bold text-gray-900 mb-8 uppercase tracking-widest text-xs">Support</h4>
+                            <ul className="space-y-4 text-gray-500">
+                                <li className="hover:text-indigo-600 transition-colors cursor-pointer">Help Center</li>
+                                <li className="hover:text-indigo-600 transition-colors cursor-pointer">Safety Guidelines</li>
+                                <li className="hover:text-indigo-600 transition-colors cursor-pointer">Terms & Privacy</li>
+                            </ul>
+                        </div>
+                        <div className="glass p-8 rounded-3xl">
+                            <h4 className="font-bold text-gray-900 mb-4">Join Newsletter</h4>
+                            <p className="text-sm text-gray-500 mb-6">Get weekly updates on the best local services.</p>
+                            <div className="flex flex-col gap-3">
+                                <input type="email" placeholder="Email address" className="bg-white/50 border border-white/60 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50" />
+                                <Button className="w-full">Subscribe</Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </footer>
