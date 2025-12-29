@@ -49,7 +49,7 @@ export default function Login() {
                     localStorage.setItem('userId', decoded.userId)
                     localStorage.setItem('userRole', decoded.role || role)
                 }
-                role === 'PROVIDER' ? navigate('/provider/dashboard') : navigate('/customer/search')
+                role === 'SERVICE_PROVIDER' ? navigate('/provider/dashboard') : navigate('/customer/search')
             })
             .catch((error) => {
                 setApiError(error.response?.data?.message || 'Login failed. Please check your credentials.')
