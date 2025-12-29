@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Calendar, Clock, DollarSign, Plus, Trash2, Edit, Search, Filter, AlertCircle, CheckCircle, X, ChevronRight, TrendingUp, Users } from 'lucide-react';
+import { MapPin, Calendar, Clock, DollarSign, Plus, Trash2, Edit, Search, Filter, AlertCircle, CheckCircle, X, ChevronRight, TrendingUp, Users, Bell } from 'lucide-react';
+import NotificationsTab from '../components/NotificationsTab';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
@@ -59,7 +60,12 @@ const ProviderDashboard = () => {
         if (activeTab === 'appointments' && userId) {
             setLoading(true);
             getBookingsByProvider(userId)
-                .then(data => setBookings(Array.isArray(data) ? data : []))
+                .then(data => {
+                    const list = Array.isArray(data) ? data : [];
+                    // Sort by bookingId DESC (newest created first)
+                    list.sort((a, b) => b.bookingId - a.bookingId);
+                    setBookings(list);
+                })
                 .catch(console.error)
                 .finally(() => setLoading(false));
         }
@@ -80,6 +86,41 @@ const ProviderDashboard = () => {
     }, [activeTab, userId, selectedDay]);
 
 
+
+
+    const handleConfirmBooking = async (bookingId) => {
+        try {
+            await confirmBooking(bookingId);
+            setBookings(bookings.map(b => b.bookingId === bookingId ? { ...b, status: 'CONFIRMED' } : b));
+            alert("Booking accepted!");
+        } catch (error) {
+            console.error(error);
+            alert("Failed to accept booking.");
+        }
+    };
+
+    const handleCompleteBooking = async (bookingId) => {
+        try {
+            await completeBooking(bookingId);
+            setBookings(bookings.map(b => b.bookingId === bookingId ? { ...b, status: 'COMPLETED' } : b));
+            alert("Booking marked as completed!");
+        } catch (error) {
+            console.error(error);
+            alert("Failed to complete booking.");
+        }
+    };
+
+    const handleProviderCancelBooking = async (bookingId) => {
+        if (!window.confirm("Are you sure you want to decline/cancel this booking?")) return;
+        try {
+            await providerCancelBooking(bookingId);
+            setBookings(bookings.map(b => b.bookingId === bookingId ? { ...b, status: 'CANCELLED' } : b));
+            alert("Booking cancelled.");
+        } catch (error) {
+            console.error(error);
+            alert("Failed to cancel booking.");
+        }
+    };
 
     return (
         <div className="min-h-screen">
@@ -107,7 +148,7 @@ const ProviderDashboard = () => {
                         { id: 'appointments', label: 'Bookings', icon: Calendar },
                         { id: 'availability', label: 'Availability', icon: Clock },
                         { id: 'earnings', label: 'Earning', icon: DollarSign },
-                        { id: 'marketplace', label: 'Insights', icon: TrendingUp },
+                        { id: 'notifications', label: 'Notifications', icon: Bell },
                     ].map(tab => (
                         <button
                             key={tab.id}
@@ -210,8 +251,15 @@ const ProviderDashboard = () => {
                                                 <p className="font-black text-gray-900">{booking.customerName}</p>
                                                 <p className="text-xs text-indigo-500 font-bold">{booking.customerPhone}</p>
                                             </div>
-                                            <div className="ml-auto flex items-center gap-2 text-[10px] font-black text-gray-400 bg-white/60 px-3 py-2 rounded-xl border border-white/40">
-                                                <MapPin size={12} /> {booking.customerAddress}
+                                            <div className="ml-auto flex flex-col items-end gap-1">
+                                                <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 bg-white/60 px-3 py-2 rounded-xl border border-white/40">
+                                                    <MapPin size={12} /> {booking.customerAddress}
+                                                </div>
+                                                {booking.customerLatitude && booking.customerLongitude && (
+                                                    <div className="text-[9px] font-bold text-indigo-400 font-mono bg-indigo-50 px-2 py-1 rounded-lg">
+                                                        {booking.customerLatitude.toFixed(4)}, {booking.customerLongitude.toFixed(4)}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -385,18 +433,10 @@ const ProviderDashboard = () => {
                     </div>
                 )}
 
-                {activeTab === 'marketplace' && (
-                    <div className="space-y-12">
-                        <div className="glass p-12 rounded-[3.5rem] text-center border-white/60 relative overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/5 to-purple-600/5 pointer-events-none" />
-                            <TrendingUp size={80} className="mx-auto text-indigo-600 opacity-20 mb-8" />
-                            <h3 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Market Intelligence</h3>
-                            <p className="text-gray-500 font-medium text-lg max-w-2xl mx-auto leading-relaxed">We're building advanced analytics to help you understand local demand, pricing trends, and competitive insights in your area.</p>
-                            <div className="mt-12 inline-flex items-center gap-3 px-8 py-3.5 bg-indigo-600 text-white rounded-2xl font-black shadow-xl shadow-indigo-100 hover:scale-105 transition-transform cursor-pointer">
-                                LEARN MORE <ChevronRight size={18} />
-                            </div>
-                        </div>
-                    </div>
+
+
+                {activeTab === 'notifications' && (
+                    <NotificationsTab userId={userId} />
                 )}
             </main>
         </div>

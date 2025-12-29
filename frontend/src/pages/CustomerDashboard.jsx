@@ -6,7 +6,8 @@ import { searchProviders } from '../services/customerService';
 import { getCategories } from '../services/categoryService';
 import { getBookingsByCustomer, customerCancelBooking } from '../services/bookingService';
 import BookingModal from '../components/BookingModal';
-import { Calendar, Search, MapPin, Clock, ArrowRight, Star, CheckCircle } from 'lucide-react';
+import { Calendar, Search, MapPin, Clock, ArrowRight, Star, CheckCircle, Bell } from 'lucide-react';
+import NotificationsTab from '../components/NotificationsTab';
 
 const CustomerDashboard = () => {
     const navigate = useNavigate();
@@ -112,6 +113,12 @@ const CustomerDashboard = () => {
                         className={`flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === 'bookings' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'text-gray-500 hover:text-indigo-600 hover:bg-white/50'}`}
                     >
                         <Calendar size={18} /> My Bookings
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('notifications')}
+                        className={`flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === 'notifications' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'text-gray-500 hover:text-indigo-600 hover:bg-white/50'}`}
+                    >
+                        <Bell size={18} /> Notifications
                     </button>
                 </div>
 
@@ -228,6 +235,10 @@ const CustomerDashboard = () => {
                             </div>
                         )}
                     </div>
+                )}
+
+                {activeTab === 'notifications' && (
+                    <NotificationsTab userId={userId} />
                 )}
 
                 <BookingModal
