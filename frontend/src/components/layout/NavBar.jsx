@@ -5,7 +5,7 @@ import { Button } from '../ui/Button';
 
 export const Navbar = ({ showAuthButtons = true, onLogout }) => {
     const userRole = localStorage.getItem('userRole');
-    const logoLink = userRole === 'PROVIDER' ? '/provider/dashboard' : (userRole === 'CUSTOMER' ? '/customer/dashboard' : '/');
+    const logoLink = (userRole === 'PROVIDER' || userRole === 'SERVICE_PROVIDER') ? '/provider/dashboard' : (userRole === 'CUSTOMER' ? '/customer/dashboard' : '/');
     const navigate = useNavigate();
 
     const logout = () => {
@@ -26,7 +26,7 @@ export const Navbar = ({ showAuthButtons = true, onLogout }) => {
 
                     {userRole ? (
                         <div className="flex items-center gap-3">
-                            <Link to={userRole === 'PROVIDER' ? '/provider/profile' : '/customer/profile'}>
+                            <Link to={(userRole === 'PROVIDER' || userRole === 'SERVICE_PROVIDER') ? '/provider/profile' : '/customer/profile'}>
                                 <Button variant="ghost" size="sm" className="hidden sm:flex items-center gap-2">
                                     <User size={18} />
                                     Profile
