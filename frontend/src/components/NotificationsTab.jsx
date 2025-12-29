@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Bell, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { getUserNotifications, markAsRead } from '../services/notificationService';
 
-const NotificationsTab = ({ userId }) => {
+const NotificationsTab = ({userId,setUnreadCount }) => {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -12,13 +12,13 @@ const NotificationsTab = ({ userId }) => {
 
     const fetchNotifications = async () => {
         setLoading(true);
-        console.log("Fetching notifications for userId:", userId);
         try {
             const data = await getUserNotifications(userId);
-            console.log("Fetched notifications:", data);
             // Sort by createdAt desc if not already sorted by backend
             const sorted = Array.isArray(data) ? data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : [];
             setNotifications(sorted);
+            const unreadCount = sorted.filter(n => !n.isRead).length;
+            setUnreadCount(unreadCount);
         } catch (error) {
             console.error("Error fetching notifications:", error);
         } finally {
@@ -32,6 +32,9 @@ const NotificationsTab = ({ userId }) => {
             setNotifications(notifications.map(n =>
                 n.id === id ? { ...n, isRead: true } : n
             ));
+            const unreadCount = notifications.filter(n => n.id !== id && !n.isRead).length;
+            setUnreadCount(unreadCount);
+            
         } catch (error) {
             console.error("Failed to mark as read", error);
         }
@@ -95,4 +98,4 @@ const NotificationsTab = ({ userId }) => {
     );
 };
 
-export default NotificationsTab;
+export default  NotificationsTab ;

@@ -66,6 +66,13 @@ public class BookingService {
         booking.setTimeSlot(req.getTimeSlot());
         booking.setStatus(BookingStatus.PENDING);
 
+        notificationService.sendNotification(
+                booking.getProviderId(),
+                "New booking request for " + booking.getListingId() +
+                        " on " + booking.getBookingDate() + " at " + booking.getTimeSlot() + ". Status: PENDING."
+        );
+
+
         return bookingRepository.save(booking);
     }
 

@@ -22,6 +22,7 @@ const CustomerDashboard = () => {
     const [activeTab, setActiveTab] = useState('search');
     const [myBookings, setMyBookings] = useState([]);
     const [loadingBookings, setLoadingBookings] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const handleLogout = () => {
         localStorage.clear();
@@ -118,7 +119,10 @@ const CustomerDashboard = () => {
                         onClick={() => setActiveTab('notifications')}
                         className={`flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === 'notifications' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'text-gray-500 hover:text-indigo-600 hover:bg-white/50'}`}
                     >
-                        <Bell size={18} /> Notifications
+                         <Bell size={18} /> <span className="absolute top-2 right-32 text-xs font-bold bg-red-500 px-1 py-0.2 rounded-full">
+                    {unreadCount>0 ? unreadCount : null}
+                  </span>
+                        Notifications
                     </button>
                 </div>
 
@@ -237,9 +241,9 @@ const CustomerDashboard = () => {
                     </div>
                 )}
 
-                {activeTab === 'notifications' && (
-                    <NotificationsTab userId={userId} />
-                )}
+                <div className={activeTab === "notifications" ? "block" : "hidden"}>
+   <NotificationsTab userId={userId} setUnreadCount={setUnreadCount}/>
+</div>
 
                 <BookingModal
                     isOpen={bookingModalOpen}
