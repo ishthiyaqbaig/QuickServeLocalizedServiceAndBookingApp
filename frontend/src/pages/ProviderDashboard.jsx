@@ -549,12 +549,12 @@ const ProviderDashboard = () => {
                       ) : (
                         <div className="grid grid-cols-2 gap-4">
                           {[
-                            "09:00",
-                            "10:00",
-                            "11:00",
-                            "12:00",
-                            "13:00",
-                            "14:00",
+                            "09:00 AM",
+                            "10:00 AM",
+                            "11:00 AM",
+                            "12:00 PM",
+                            "01:00 PM",
+                            "02:00 PM",
                           ].map((slot) => {
                             const isActive = availability.includes(slot);
                             return (
