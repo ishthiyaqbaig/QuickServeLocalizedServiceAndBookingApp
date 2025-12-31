@@ -1,13 +1,16 @@
 package com.example.backend.controllers;
 
 import com.example.backend.dto.CreateBookingRequest;
+import com.example.backend.dto.CreateReviewRequest;
 import com.example.backend.dto.CustomerBookingResponse;
 import com.example.backend.entity.Booking;
 import com.example.backend.entity.Listing;
 import com.example.backend.entity.ProviderAvailability;
+import com.example.backend.entity.Review;
 import com.example.backend.enums.DayEnum;
 import com.example.backend.services.BookingService;
 import com.example.backend.services.ProviderAvailabilityService;
+import com.example.backend.services.ReviewService;
 import com.example.backend.services.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +26,7 @@ public class CustomerController {
     private final SearchService searchService;
     private final BookingService bookingService;
     private final ProviderAvailabilityService providerAvailabilityService;
+    private final ReviewService reviewService;
 
     // Search
 
@@ -64,5 +68,17 @@ public class CustomerController {
         return ResponseEntity.ok(
                 providerAvailabilityService.getAvailability(providerId, day)
         );
+    }
+
+    //Review
+
+    @PostMapping("/reviews")
+    public ResponseEntity<Review> submitReview(@RequestBody CreateReviewRequest req) {
+        return ResponseEntity.ok(reviewService.submitReview(req));
+    }
+
+    @GetMapping("/reviews/{bookingId}")
+    public ResponseEntity<?> getReviews(@PathVariable Long bookingId) {
+        return ResponseEntity.ok(reviewService.getReviewsByBooking(bookingId));
     }
 }
