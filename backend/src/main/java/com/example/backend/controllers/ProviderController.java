@@ -11,6 +11,7 @@ import com.example.backend.enums.DayEnum;
 import com.example.backend.services.BookingService;
 import com.example.backend.services.ListingService;
 import com.example.backend.services.ProviderAvailabilityService;
+import com.example.backend.services.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class ProviderController {
     private final ListingService listingService;
     private final BookingService bookingService;
     private final ProviderAvailabilityService providerAvailabilityService;
+    private final ReviewService reviewService;
 
     // Test endpoint
     @GetMapping("/test")
@@ -134,6 +136,14 @@ public class ProviderController {
     @PostMapping("/bookings/{bookingId}/cancel")
     public ResponseEntity<Booking> cancelBooking(@PathVariable Long bookingId) {
         return ResponseEntity.ok(bookingService.cancelBooking(bookingId,"Provider"));
+    }
+
+
+    //reviews
+
+    @GetMapping("/reviews/{bookingId}")
+    public ResponseEntity<?> getReviews(@PathVariable Long bookingId) {
+        return ResponseEntity.ok(reviewService.getReviewsByBooking(bookingId));
     }
 
 }

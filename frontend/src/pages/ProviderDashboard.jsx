@@ -115,6 +115,7 @@ const ProviderDashboard = () => {
           await Promise.all(completed.map(async (booking) => {
             try {
               const bookingReviews = await getProviderReviewsByBooking(booking.bookingId);
+              console.log("Fetched reviews for booking " , booking);
               if (bookingReviews && bookingReviews.length > 0) {
                 // bookingReviews is a list, but usually 1 per booking
                 bookingReviews.forEach(r => {
