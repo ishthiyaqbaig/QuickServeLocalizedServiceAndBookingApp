@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Bell, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { getUserNotifications, markAsRead } from '../services/notificationService';
 
-const NotificationsTab = ({userId,setUnreadCount }) => {
+const NotificationsTab = ({ userId, setUnreadCount, onNotificationClick }) => {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -14,7 +14,6 @@ const NotificationsTab = ({userId,setUnreadCount }) => {
         setLoading(true);
         try {
             const data = await getUserNotifications(userId);
-            // Sort by createdAt desc if not already sorted by backend
             const sorted = Array.isArray(data) ? data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : [];
             setNotifications(sorted);
             const unreadCount = sorted.filter(n => !n.isRead).length;
@@ -34,7 +33,7 @@ const NotificationsTab = ({userId,setUnreadCount }) => {
             ));
             const unreadCount = notifications.filter(n => n.id !== id && !n.isRead).length;
             setUnreadCount(unreadCount);
-            
+
         } catch (error) {
             console.error("Failed to mark as read", error);
         }
@@ -61,41 +60,57 @@ const NotificationsTab = ({userId,setUnreadCount }) => {
 
     return (
         <div className="space-y-4">
-            {notifications.map((notification) => (
-                <div
-                    key={notification.id}
-                    className={`glass p-6 rounded-[2rem] flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center transition-all duration-300 ${!notification.isRead ? 'border-l-4 border-l-indigo-600 bg-indigo-50/20 shadow-lg' : 'opacity-75 hover:opacity-100'}`}
-                >
-                    <div className="flex gap-4 items-start">
-                        <div className={`p-3 rounded-2xl shrink-0 ${!notification.isRead ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400'}`}>
-                            <Bell size={24} />
-                        </div>
-                        <div>
-                            <p className="text-gray-800 font-bold text-lg leading-snug mb-2">{notification.message}</p>
-                            <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
-                                <Clock size={12} />
-                                {new Date(notification.createdAt).toLocaleString()}
+            {notifications.map((notification) => {
+                const isCompleted = notification.message.includes("COMPLETED");
+                const isConfirmed = notification.message.includes("CONFIRMED");
+
+                return (
+                    <div
+                        key={notification.id}
+                        className={`glass p-6 rounded-[2rem] flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center transition-all duration-300 ${!notification.isRead ? 'border-l-4 border-l-indigo-600 bg-indigo-50/20 shadow-lg' : 'opacity-75 hover:opacity-100'}`}
+                    >
+                        <div className="flex gap-4 items-start flex-1">
+                            <div className={`p-3 rounded-2xl shrink-0 ${!notification.isRead ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400'}`}>
+                                {isCompleted ? <CheckCircle size={24} /> : isConfirmed ? <CheckCircle size={24} /> : <Bell size={24} />}
+                            </div>
+                            <div>
+                                <p className="text-gray-800 font-bold text-lg leading-snug mb-2">{notification.message}</p>
+                                <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                    <Clock size={12} />
+                                    {new Date(notification.createdAt).toLocaleString()}
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {!notification.isRead && (
-                        <button
-                            onClick={() => handleMarkAsRead(notification.id)}
-                            className="bg-white/50 hover:bg-white text-indigo-600 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm border border-white/40 whitespace-nowrap self-end sm:self-center"
-                        >
-                            Mark as Read
-                        </button>
-                    )}
-                    {notification.isRead && (
-                        <div className="text- emerald-600 flex items-center gap-1 text-xs font-black uppercase tracking-widest opacity-50">
-                            <CheckCircle size={14} /> Read
+                        <div className="flex items-center gap-3 self-end sm:self-center">
+                            {isCompleted && (
+                                <button
+                                    onClick={() => onNotificationClick && onNotificationClick('history')}
+                                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-200 whitespace-nowrap"
+                                >
+                                    Rate Service
+                                </button>
+                            )}
+
+                            {!notification.isRead && (
+                                <button
+                                    onClick={() => handleMarkAsRead(notification.id)}
+                                    className="bg-white/50 hover:bg-white text-indigo-600 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-sm border border-white/40 whitespace-nowrap"
+                                >
+                                    Mark as Read
+                                </button>
+                            )}
+                            {notification.isRead && (
+                                <div className="text- emerald-600 flex items-center gap-1 text-xs font-black uppercase tracking-widest opacity-50">
+                                    <CheckCircle size={14} /> Read
+                                </div>
+                            )}
                         </div>
-                    )}
-                </div>
-            ))}
+                    </div>
+                )
+            })}
         </div>
     );
 };
 
-export default  NotificationsTab ;
+export default NotificationsTab;
