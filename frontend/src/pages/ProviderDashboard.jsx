@@ -17,6 +17,7 @@ import {
   TrendingUp,
   Users,
   Bell,
+  Star,
 } from "lucide-react";
 import NotificationsTab from "../components/NotificationsTab";
 import { Button } from "../components/ui/Button";
@@ -34,12 +35,14 @@ import {
   getProviderAvailability,
   updateProviderAvailability,
 } from "../services/bookingService";
+import { getProviderReviewsByBooking } from "../services/reviewService";
 
 const ProviderDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("services");
   const [listings, setListings] = useState([]);
   const [bookings, setBookings] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -93,6 +96,44 @@ const ProviderDashboard = () => {
           // Sort by bookingId DESC (newest created first)
           list.sort((a, b) => b.bookingId - a.bookingId);
           setBookings(list);
+        })
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    }
+  }, [activeTab, userId]);
+
+  useEffect(() => {
+    if (activeTab === "reviews" && userId) {
+      setLoading(true);
+      getBookingsByProvider(userId)
+        .then(async (bookingsData) => {
+          const list = Array.isArray(bookingsData) ? bookingsData : [];
+          const completed = list.filter(b => b.status === "COMPLETED");
+
+          const reviewsList = [];
+
+          await Promise.all(completed.map(async (booking) => {
+            try {
+              const bookingReviews = await getProviderReviewsByBooking(booking.bookingId);
+              if (bookingReviews && bookingReviews.length > 0) {
+                // bookingReviews is a list, but usually 1 per booking
+                bookingReviews.forEach(r => {
+                  reviewsList.push({
+                    ...r,
+                    customerName: booking.customerName,
+                    serviceName: booking.serviceName,
+                    bookingDate: booking.bookingDate
+                  });
+                });
+              }
+            } catch (e) {
+              console.error("Failed to fetch review for " + booking.bookingId);
+            }
+          }));
+
+          // Sort by ID desc (newest first roughly)
+          reviewsList.sort((a, b) => b.id - a.id);
+          setReviews(reviewsList);
         })
         .catch(console.error)
         .finally(() => setLoading(false));
@@ -200,16 +241,16 @@ const ProviderDashboard = () => {
             { id: "appointments", label: "Bookings", icon: Calendar },
             { id: "availability", label: "Availability", icon: Clock },
             { id: "earnings", label: "Earning", icon: DollarSign },
+            { id: "reviews", label: "Reviews", icon: Star },
             { id: "notifications", label: "Notifications", icon: Bell },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-3 px-8 py-3.5 rounded-2xl text-sm font-black transition-all duration-300 whitespace-nowrap ${
-                activeTab === tab.id
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
-                  : "text-gray-400 hover:text-indigo-600 hover:bg-white/50"
-              }`}
+              className={`flex items-center gap-3 px-8 py-3.5 rounded-2xl text-sm font-black transition-all duration-300 whitespace-nowrap ${activeTab === tab.id
+                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
+                : "text-gray-400 hover:text-indigo-600 hover:bg-white/50"
+                }`}
             >
               <div className="relative inline-flex items-center">
                 <tab.icon size={20} />
@@ -241,9 +282,8 @@ const ProviderDashboard = () => {
                   className="glass group overflow-hidden rounded-[2.5rem] transition-all duration-500 hover:scale-[1.02] border-white/60"
                 >
                   <div
-                    className={`h-56 relative overflow-hidden ${
-                      listing.disabled ? "grayscale" : ""
-                    }`}
+                    className={`h-56 relative overflow-hidden ${listing.disabled ? "grayscale" : ""
+                      }`}
                   >
                     <img
                       src={listing.images}
@@ -344,13 +384,12 @@ const ProviderDashboard = () => {
                         {booking.serviceName}
                       </h3>
                       <span
-                        className={`px-4 py-1.5 text-[10px] rounded-full font-black uppercase tracking-widest border border-white/40 shadow-inner ${
-                          booking.status === "CONFIRMED"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : booking.status === "PENDING"
+                        className={`px-4 py-1.5 text-[10px] rounded-full font-black uppercase tracking-widest border border-white/40 shadow-inner ${booking.status === "CONFIRMED"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : booking.status === "PENDING"
                             ? "bg-amber-100 text-amber-700"
                             : "bg-indigo-100 text-indigo-700"
-                        }`}
+                          }`}
                       >
                         {booking.status}
                       </span>
@@ -571,11 +610,10 @@ const ProviderDashboard = () => {
                                   }
                                 }}
                                 disabled={savingAvailability}
-                                className={`p-4 rounded-2xl font-bold flex items-center justify-between border transition-all ${
-                                  isActive
-                                    ? "bg-indigo-600 text-white border-indigo-600 shadow-xl shadow-indigo-200"
-                                    : "bg-white/40 text-gray-500 border-white/40 hover:bg-white"
-                                }`}
+                                className={`p-4 rounded-2xl font-bold flex items-center justify-between border transition-all ${isActive
+                                  ? "bg-indigo-600 text-white border-indigo-600 shadow-xl shadow-indigo-200"
+                                  : "bg-white/40 text-gray-500 border-white/40 hover:bg-white"
+                                  }`}
                               >
                                 <div className="flex items-center gap-2">
                                   <Clock
@@ -658,9 +696,58 @@ const ProviderDashboard = () => {
           </div>
         )}
 
+        {activeTab === "reviews" && (
+          <div className="space-y-8">
+            {loading ? (
+              <div className="py-32 glass rounded-[3rem] text-center">
+                <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin mx-auto mb-6" />
+                <p className="font-bold text-gray-400">Loading reviews...</p>
+              </div>
+            ) : reviews.length === 0 ? (
+              <div className="py-32 glass rounded-[3rem] text-center border-dashed">
+                <Star size={64} className="mx-auto text-gray-200 mb-6" />
+                <h3 className="text-2xl font-black text-gray-900">No Reviews Yet</h3>
+                <p className="text-gray-400 mt-2 font-medium">Ratings from your happy customers will appear here.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {reviews.map((review) => (
+                  <div key={review.id} className="glass p-8 rounded-[2.5rem] border-white/60 hover:shadow-xl transition-all">
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center font-black text-lg">
+                          {review.customerName ? review.customerName.charAt(0) : "C"}
+                        </div>
+                        <div>
+                          <h3 className="font-black text-gray-900">{review.customerName || "Customer"}</h3>
+                          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{review.serviceName}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100">
+                        <Star size={16} className="fill-amber-400 text-amber-400" />
+                        <span className="text-amber-700 font-black">{review.rating}</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-white/40 p-6 rounded-2xl mb-4">
+                      <p className="text-gray-600 italic font-medium leading-relaxed">
+                        "{review.comment || "No comment provided."}"
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      <Calendar size={12} /> {review.bookingDate}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         <div className={activeTab === "notifications" ? "block" : "hidden"}>
-   <NotificationsTab userId={userId} setUnreadCount={setUnreadCount}/>
-</div>
+          <NotificationsTab userId={userId} setUnreadCount={setUnreadCount} />
+        </div>
       </main>
     </div>
   );
@@ -754,15 +841,14 @@ const CalendarWidget = ({
                   setSelectedDay(dayOfWeek);
                 }}
                 disabled={isPast}
-                className={`h-10 w-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
-                  isUISelected
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
-                    : isToday
+                className={`h-10 w-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${isUISelected
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
+                  : isToday
                     ? "bg-indigo-100 text-indigo-600"
                     : isPast
-                    ? "text-gray-300 cursor-not-allowed"
-                    : "hover:bg-white text-gray-600"
-                }`}
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "hover:bg-white text-gray-600"
+                  }`}
               >
                 {d}
               </button>
