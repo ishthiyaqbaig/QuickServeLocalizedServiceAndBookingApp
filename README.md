@@ -1,3 +1,4 @@
+
 # QuickServe App
 
 A simple team project containing **frontend** (React + Vite) and **backend** (Spring Boot)**.**
@@ -89,3 +90,6 @@ git push -u origin feature-taskname
 ## 🎉 Done!
 
 This simple workflow keeps our first project clean and easy for everyone.
+
+
+
