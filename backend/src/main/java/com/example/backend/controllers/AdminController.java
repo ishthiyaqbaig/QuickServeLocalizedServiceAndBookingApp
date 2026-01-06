@@ -1,8 +1,11 @@
 package com.example.backend.controllers;
 
 import com.example.backend.dto.AnalyticsResponse;
+import com.example.backend.dto.UserAdminResponse;
+import com.example.backend.dto.UserResponse;
 import com.example.backend.entity.Listing;
 import com.example.backend.entity.ServiceCategory;
+import com.example.backend.entity.User;
 import com.example.backend.services.AdminService;
 import com.example.backend.services.AnalyticsService;
 import lombok.RequiredArgsConstructor;
@@ -52,5 +55,30 @@ public class AdminController {
     @GetMapping("/analytics/top-services")
     public ResponseEntity<List<AnalyticsResponse>> topServices() {
         return ResponseEntity.ok(analyticsService.getTopServices());
+    }
+
+    @GetMapping("/listings")
+    public ResponseEntity<List<Listing>> getAllListings() {
+        return ResponseEntity.ok(adminService.findAllListings());
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<UserAdminResponse>> getAllUsers() {
+        List<User>users=adminService.findAllUser();
+        List<UserAdminResponse> response = users.stream()
+                .map(u -> new UserAdminResponse(
+                        u.getId(),
+                        u.getEmail(),
+                        u.getUserName(),
+                        u.getRole(),
+                        u.getNumber(),
+                        u.getPermanentLatitude(),
+                        u.getPermanentLongitude(),
+                        u.getPermanentAddress(),
+                        u.getCreatedAt()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(response);
     }
 }

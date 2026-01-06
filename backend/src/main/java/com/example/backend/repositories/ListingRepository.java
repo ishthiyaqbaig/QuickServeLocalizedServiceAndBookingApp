@@ -30,4 +30,5 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
             @Param("categoryId") Long categoryId
     );
     List<Listing> findByProviderId(Long providerId);
+    List<Listing> findByIsApprovedTrue();
 }

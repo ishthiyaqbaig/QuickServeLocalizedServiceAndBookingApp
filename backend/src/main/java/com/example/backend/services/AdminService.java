@@ -1,14 +1,8 @@
 package com.example.backend.services;
 
-import com.example.backend.entity.AdminAction;
-import com.example.backend.entity.Analytics;
-import com.example.backend.entity.Listing;
-import com.example.backend.entity.ServiceCategory;
+import com.example.backend.entity.*;
 import com.example.backend.enums.AdminActionType;
-import com.example.backend.repositories.AdminActionRepository;
-import com.example.backend.repositories.AnalyticsRepository;
-import com.example.backend.repositories.ListingRepository;
-import com.example.backend.repositories.ServiceCategoryRepository;
+import com.example.backend.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +17,7 @@ public class AdminService {
     private final AnalyticsRepository analyticsRepository;
     private final AdminActionRepository adminActionRepository;
     private final NotificationService notificationService;
+    private final UserRepository userRepository;
 
     public Listing approveListing(Long listingId, Long adminId, String reason) {
         Listing listing = listingRepository.findById(listingId).orElseThrow();
@@ -79,5 +74,13 @@ public class AdminService {
         a.setListingId(listingId);
         a.setCategoryId(categoryId);
         analyticsRepository.save(a);
+    }
+
+   public List<User>findAllUser(){
+        return userRepository.findAll();
+    }
+
+    public List<Listing>findAllListings(){
+        return listingRepository.findByIsApprovedTrue();
     }
 }
