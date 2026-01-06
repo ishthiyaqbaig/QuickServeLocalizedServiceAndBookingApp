@@ -1,0 +1,83 @@
+package com.example.backend.services;
+
+import com.example.backend.entity.AdminAction;
+import com.example.backend.entity.Analytics;
+import com.example.backend.entity.Listing;
+import com.example.backend.entity.ServiceCategory;
+import com.example.backend.enums.AdminActionType;
+import com.example.backend.repositories.AdminActionRepository;
+import com.example.backend.repositories.AnalyticsRepository;
+import com.example.backend.repositories.ListingRepository;
+import com.example.backend.repositories.ServiceCategoryRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class AdminService {
+
+    private final ListingRepository listingRepository;
+    private final ServiceCategoryRepository categoryRepository;
+    private final AnalyticsRepository analyticsRepository;
+    private final AdminActionRepository adminActionRepository;
+    private final NotificationService notificationService;
+
+    public Listing approveListing(Long listingId, Long adminId, String reason) {
+        Listing listing = listingRepository.findById(listingId).orElseThrow();
+        listing.setIsApproved(true);
+        listingRepository.save(listing);
+
+        AdminAction action = new AdminAction();
+        action.setListingId(listingId);
+        action.setAdminId(adminId);
+        action.setActionType(AdminActionType.APPROVE);
+        action.setReason(reason);
+        adminActionRepository.save(action);
+
+        logEvent("LISTING_APPROVED", adminId, listingId, null);
+
+        notificationService.sendNotification(listing.getProviderId(), "Your listing is approved by Admin.");
+
+        return listing;
+    }
+
+    public Listing rejectListing(Long listingId, Long adminId, String reason) {
+        Listing listing = listingRepository.findById(listingId).orElseThrow();
+        listing.setIsApproved(false);
+        listingRepository.save(listing);
+
+        AdminAction action = new AdminAction();
+        action.setListingId(listingId);
+        action.setAdminId(adminId);
+        action.setActionType(AdminActionType.REJECT);
+        action.setReason(reason);
+        adminActionRepository.save(action);
+
+        logEvent("LISTING_REJECTED", adminId, listingId, null);
+
+        notificationService.sendNotification(listing.getProviderId(), "Your listing is rejected by Admin. Reason: " + reason);
+
+        return listing;
+    }
+
+    public ServiceCategory createCategory(ServiceCategory category, Long adminId) {
+        ServiceCategory saved = categoryRepository.save(category);
+        logEvent("CATEGORY_CREATED", adminId, null, saved.getId());
+        return saved;
+    }
+
+    public List<ServiceCategory> getCategories() {
+        return categoryRepository.findAll();
+    }
+
+    private void logEvent(String eventType, Long userId, Long listingId, Long categoryId) {
+        Analytics a = new Analytics();
+        a.setEventType(eventType);
+        a.setUserId(userId);
+        a.setListingId(listingId);
+        a.setCategoryId(categoryId);
+        analyticsRepository.save(a);
+    }
+}
