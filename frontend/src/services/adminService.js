@@ -1,8 +1,12 @@
 import apiClient from '../api/client';
 
 // Listings
-export const getListings = async () => {
-    const response = await apiClient.get('/admin/listings');
+export const getPendingListings = async () => {
+    const response = await apiClient.get('/admin/pending/listings');
+    return response.data;
+};
+export const getAprovedListings = async () => {
+    const response = await apiClient.get('/admin/approved/listings');
     return response.data;
 };
 

@@ -31,4 +31,5 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
     );
     List<Listing> findByProviderId(Long providerId);
     List<Listing> findByIsApprovedTrue();
+    List<Listing> findByIsApprovedFalse();
 }

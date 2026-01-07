@@ -57,9 +57,13 @@ public class AdminController {
         return ResponseEntity.ok(analyticsService.getTopServices());
     }
 
-    @GetMapping("/listings")
-    public ResponseEntity<List<Listing>> getAllListings() {
-        return ResponseEntity.ok(adminService.findAllListings());
+    @GetMapping("/pending/listings")
+    public ResponseEntity<List<Listing>> getAllPendingListings() {
+        return ResponseEntity.ok(adminService.findAllPendingListings());
+    }
+    @GetMapping("/approved/listings")
+    public ResponseEntity<List<Listing>> getAllApprovedListings() {
+        return ResponseEntity.ok(adminService.findAllApprovedListings());
     }
 
     @GetMapping("/users")
