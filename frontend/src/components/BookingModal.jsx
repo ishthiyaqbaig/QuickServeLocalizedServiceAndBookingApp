@@ -61,6 +61,7 @@ const BookingModal = ({ isOpen, onClose, service, userId }) => {
                 setSuccess(false);
                 onClose();
             }, 2000);
+            
         } catch (err) {
             alert(err.response?.data?.message || "Booking failed. Please try again.");
         } finally {

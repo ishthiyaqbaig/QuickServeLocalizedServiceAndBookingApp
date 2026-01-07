@@ -83,9 +83,13 @@ const NotificationsTab = ({ userId, setUnreadCount, onNotificationClick }) => {
                         </div>
 
                         <div className="flex items-center gap-3 self-end sm:self-center">
-                            {isCompleted && (
+                            {isCompleted && !notification.isRead && (
                                 <button
-                                    onClick={() => onNotificationClick && onNotificationClick('history')}
+                                    onClick={() => {
+                                        onNotificationClick && onNotificationClick('history')
+                                        handleMarkAsRead(notification.id)
+                                    }
+                                    }
                                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-200 whitespace-nowrap"
                                 >
                                     Rate Service
