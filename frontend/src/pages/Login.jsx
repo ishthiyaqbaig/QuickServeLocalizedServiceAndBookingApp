@@ -47,9 +47,17 @@ export default function Login() {
                     localStorage.setItem('authToken', data.token)
                     const decoded = jwtDecode(data.token)
                     localStorage.setItem('userId', decoded.userId)
-                    localStorage.setItem('userRole', decoded.role || role)
+                    const userRole = decoded.role || role;
+                    localStorage.setItem('userRole', userRole);
+
+                    if (userRole === 'SERVICE_PROVIDER') {
+                        navigate('/provider/dashboard');
+                    } else if (userRole === 'ADMIN') {
+                        navigate('/admin/dashboard');
+                    } else {
+                        navigate('/customer/search');
+                    }
                 }
-                role === 'SERVICE_PROVIDER' ? navigate('/provider/dashboard') : navigate('/customer/search')
             })
             .catch((error) => {
                 setApiError(error.response?.data?.message || 'Login failed. Please check your credentials.')
