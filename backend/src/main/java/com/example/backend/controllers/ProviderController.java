@@ -11,6 +11,7 @@ import com.example.backend.enums.DayEnum;
 import com.example.backend.services.BookingService;
 import com.example.backend.services.ListingService;
 import com.example.backend.services.ProviderAvailabilityService;
+import com.example.backend.services.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class ProviderController {
     private final ListingService listingService;
     private final BookingService bookingService;
     private final ProviderAvailabilityService providerAvailabilityService;
+    private final ReviewService reviewService;
 
     // Test endpoint
     @GetMapping("/test")
@@ -32,7 +34,7 @@ public class ProviderController {
         return ResponseEntity.ok("Provider endpoint working!");
     }
 
-    // Listing
+    //Listing
     @PostMapping("/{providerId}/listings")
     public ResponseEntity<Listing> createListing(
             @PathVariable Long providerId,
@@ -46,7 +48,7 @@ public class ProviderController {
     public ResponseEntity<List<Listing>> getAllListing(
             @PathVariable Long providerId) {
 
-        List<Listing> listings = listingService.getListingsByProvider(providerId);
+        List<Listing>listings = listingService.getListingsByProvider(providerId);
         return ResponseEntity.ok(listings);
     }
 
@@ -58,28 +60,32 @@ public class ProviderController {
     }
 
     @PutMapping("/listings/{listingId}")
-    public ResponseEntity<Listing> updateListing(
+    public ResponseEntity<Listing>updateListing(
             @PathVariable Long listingId,
-            @ModelAttribute UpdateListingRequest request) {
+            @ModelAttribute UpdateListingRequest request
+    ) {
 
-        Listing listing = listingService.updateListing(listingId, request);
+        Listing listing = listingService.updateListing(listingId,request);
         return ResponseEntity.ok(listing);
     }
 
     @DeleteMapping("/listings/{listingId}")
     public ResponseEntity<?> deleteListing(
-            @PathVariable Long listingId) {
+            @PathVariable Long listingId
+    ) {
 
         listingService.deleteListing(listingId);
         return ResponseEntity.ok("deleted successfully");
     }
+
 
     // availability
 
     @PostMapping("/availability/{providerId}")
     public ResponseEntity<String> setAvailability(
             @PathVariable Long providerId,
-            @RequestBody AvailabilityRequest req) {
+            @RequestBody AvailabilityRequest req
+    ) {
         providerAvailabilityService.saveOrUpdateAvailability(providerId, req);
         return ResponseEntity.ok("Availability saved");
     }
@@ -87,27 +93,33 @@ public class ProviderController {
     @GetMapping("/availability/{providerId}")
     public ResponseEntity<ProviderAvailability> getAvailability(
             @PathVariable Long providerId,
-            @RequestParam DayEnum day) {
+            @RequestParam DayEnum day
+    ) {
         return ResponseEntity.ok(
-                providerAvailabilityService.getAvailability(providerId, day));
+                providerAvailabilityService.getAvailability(providerId, day)
+        );
     }
 
     @DeleteMapping("/availability/{providerId}/slot")
     public ResponseEntity<String> deleteSlot(
             @PathVariable Long providerId,
-            @RequestBody RemoveSlotRequest req) {
+            @RequestBody RemoveSlotRequest req
+    ) {
         providerAvailabilityService.removeTimeSlot(
                 providerId,
                 req.getDay(),
-                req.getTimeSlot());
+                req.getTimeSlot()
+        );
         return ResponseEntity.ok("Slot removed");
     }
+
 
     // Booking
 
     @GetMapping("/bookings/{providerId}")
     public ResponseEntity<?> providerBookings(
-            @PathVariable Long providerId) {
+            @PathVariable Long providerId
+    ) {
         return ResponseEntity.ok(bookingService.getProviderBookings(providerId));
     }
 
@@ -123,7 +135,16 @@ public class ProviderController {
 
     @PostMapping("/bookings/{bookingId}/cancel")
     public ResponseEntity<Booking> cancelBooking(@PathVariable Long bookingId) {
-        return ResponseEntity.ok(bookingService.cancelBooking(bookingId, "Provider"));
+        return ResponseEntity.ok(bookingService.cancelBooking(bookingId,"Provider"));
+    }
+
+
+    //reviews
+
+    @GetMapping("/reviews/{bookingId}")
+    public ResponseEntity<?> getReviews(@PathVariable Long bookingId) {
+        return ResponseEntity.ok(reviewService.getReviewsByBooking(bookingId));
     }
 
 }
+
