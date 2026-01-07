@@ -7,12 +7,12 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class UserResponse {
+@AllArgsConstructor
+public class UserAdminResponse {
     private Long id;
     private String email;
     private String userName;
     private Role role;
-    private String image;
     private Long number;
 
     private Double permanentLatitude;
