@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Calendar, Clock, CheckCircle } from 'lucide-react';
 import { Button } from './ui/Button';
 import { createBooking, getCustomerViewAvailability } from '../services/bookingService';
@@ -61,6 +61,7 @@ const BookingModal = ({ isOpen, onClose, service, userId }) => {
                 setSuccess(false);
                 onClose();
             }, 2000);
+            
         } catch (err) {
             alert(err.response?.data?.message || "Booking failed. Please try again.");
         } finally {

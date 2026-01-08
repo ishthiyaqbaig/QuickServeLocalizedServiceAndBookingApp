@@ -5,7 +5,7 @@ import { Button } from '../ui/Button';
 
 export const Navbar = ({ showAuthButtons = true, onLogout }) => {
     const userRole = localStorage.getItem('userRole');
-    const logoLink = (userRole === 'PROVIDER' || userRole === 'SERVICE_PROVIDER') ? '/provider/dashboard' : (userRole === 'CUSTOMER' ? '/customer/dashboard' : '/');
+    const logoLink = (userRole === 'PROVIDER' || userRole === 'SERVICE_PROVIDER') ? '/provider/dashboard' : (userRole === 'ADMIN' ? '/admin/dashboard' : (userRole === 'CUSTOMER' ? '/customer/search' : '/'));
     const navigate = useNavigate();
 
     const logout = () => {
@@ -15,18 +15,16 @@ export const Navbar = ({ showAuthButtons = true, onLogout }) => {
 
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 px-4 py-4">
-            <div className="max-w-7xl mx-auto glass rounded-2xl px-6 shadow-2xl shadow-indigo-100/20">
-                <div className="flex justify-between h-16 items-center">
+            <div className="max-w-7xl mx-auto glass rounded-2xl shadow-2xl shadow-indigo-100/20 " >
+                <div className="flex justify-between h-16 items-center bg-linear-to-r from-indigo-800 to-purple-600 rounded-2xl px-6">
                     <Link to={logoLink} className="flex items-center gap-3 group transition-transform hover:scale-105">
-                        <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200 group-hover:rotate-12 transition-transform">
-                            <MapPin className="text-white w-6 h-6" />
-                        </div>
-                        <span className="text-2xl font-bold text-gray-900 tracking-tight">Quick Serve</span>
+                        <img src="/quickserve-logo-transparent.png" alt="Quick Serve Logo" className="h-10 w-36 rounded-full" />
+                        {/* <span className="text-2xl font-bold text-gray-900 tracking-tight">Quick Serve</span> */}
                     </Link>
 
                     {userRole ? (
                         <div className="flex items-center gap-3">
-                            <Link to={(userRole === 'PROVIDER' || userRole === 'SERVICE_PROVIDER') ? '/provider/profile' : '/customer/profile'}>
+                            <Link to={(userRole === 'PROVIDER' || userRole === 'SERVICE_PROVIDER') ? '/provider/profile' : (userRole === 'ADMIN' ? '/admin/profile' : '/customer/profile')}>
                                 <Button variant="ghost" size="sm" className="hidden sm:flex items-center gap-2">
                                     <User size={18} />
                                     Profile
@@ -41,7 +39,7 @@ export const Navbar = ({ showAuthButtons = true, onLogout }) => {
                         showAuthButtons && (
                             <div className="flex items-center gap-3">
                                 <Link to="/login">
-                                    <Button variant="ghost" size="sm" className="px-5">Log In</Button>
+                                    <Button variant="primary" size="sm" className="px-5 text-gray-100">Log In</Button>
                                 </Link>
                                 <Link to="/signup">
                                     <Button size="sm" className="px-6">Sign Up</Button>

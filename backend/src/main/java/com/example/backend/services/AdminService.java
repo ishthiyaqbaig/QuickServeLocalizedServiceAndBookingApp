@@ -80,7 +80,10 @@ public class AdminService {
         return userRepository.findAll();
     }
 
-    public List<Listing>findAllListings(){
+    public List<Listing>findAllPendingListings(){
+        return listingRepository.findByIsApprovedFalse();
+    }
+    public List<Listing>findAllApprovedListings(){
         return listingRepository.findByIsApprovedTrue();
     }
 }

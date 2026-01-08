@@ -6,8 +6,10 @@ import SignUp from './pages/SignUp';
 import CreateListing from './pages/CreateListings';
 import CustomerDashboard from './pages/CustomerDashboard';
 import ProviderDashboard from './pages/ProviderDashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import CustomerProfile from './pages/CustomerProfile';
 import ProviderProfile from './pages/ProviderProfile';
+import AdminProfile from './pages/AdminProfile';
 import UpdateListing from './pages/UpdateListing';
 
 function App() {
@@ -24,6 +26,8 @@ function App() {
                 <Route path="/provider/dashboard" element={<ProviderDashboard />} />
                 <Route path="/customer/profile" element={<CustomerProfile />} />
                 <Route path="/provider/profile" element={<ProviderProfile />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/profile" element={<AdminProfile />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </Router>
