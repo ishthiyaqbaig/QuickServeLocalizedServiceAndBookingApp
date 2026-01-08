@@ -19,9 +19,9 @@ import {
   User as UserIcon,
   Mail,
 } from "lucide-react";
-import { toast } from "react-hot-toast";
 import { Input } from "../components/ui/Input";
 import { jwtDecode } from "jwt-decode";
+import {toast} from "sonner"
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("analytics");
@@ -102,7 +102,8 @@ export default function AdminDashboard() {
   const handleCreateCategory = async (e) => {
     e.preventDefault();
     try {
-      await createCategory(categoryForm);
+      const id=getAdminId();
+      await createCategory(categoryForm,id);
       toast.success("Category created successfully");
       setCategoryForm({ name: "", description: "" });
     } catch (error) {
@@ -115,6 +116,7 @@ export default function AdminDashboard() {
       await approveListing(id, getAdminId());
       toast.success("Listing approved");
       fetchListings();
+      fetchPendingListings();
     } catch (error) {
       toast.error("Failed to approve listing");
     }
@@ -125,6 +127,7 @@ export default function AdminDashboard() {
       await rejectListing(id, getAdminId());
       toast.success("Listing rejected");
       fetchListings();
+      fetchPendingListings();
     } catch (error) {
       toast.error("Failed to reject listing");
     }

@@ -23,6 +23,7 @@ import {
   getUser,
   updateProfile,
 } from "../services/userService";
+import { toast } from "sonner";
 
 const ProviderProfile = () => {
   const navigate = useNavigate();
@@ -89,7 +90,8 @@ const ProviderProfile = () => {
       }
 
       await updateProfile(userId, formData);
-      alert("Profile updated successfully");
+      toast.success("Profile updated successfully");
+      // alert("Profile updated successfully");
     } finally {
       setLoadingProfile(false);
     }

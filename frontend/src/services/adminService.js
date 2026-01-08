@@ -32,12 +32,12 @@ export const getUsers = async () => {
 
 // Categories
 export const getCategories = async () => {
-    const response = await apiClient.get('/service_categories');
+    const response = await apiClient.get('/admin/categories');
     return response.data;
 };
 
-export const createCategory = async (categoryData) => {
-    const response = await apiClient.post('/admin/create-category', categoryData);
+export const createCategory = async (categoryData,id) => {
+    const response = await apiClient.post(`/admin/create-category?adminId=${id}`, categoryData);
     return response.data;
 };
 

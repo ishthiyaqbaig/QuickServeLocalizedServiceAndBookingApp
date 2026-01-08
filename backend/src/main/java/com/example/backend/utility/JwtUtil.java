@@ -2,6 +2,7 @@ package com.example.backend.utility;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,19 +13,21 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final Key secretKey;
+    @Value("${jwt.secret}")
+    private String secret;
 
-    public JwtUtil(@Value("${app.jwt.secret}") String secret) {
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-    }
+    private Key secretKey;
 
-    public String generateToken(Long userId,String email, String role) {
+    private static final long EXPIRATION_TIME = 86400000; // 1 day
+
+
+    public String generateToken(Long userId, String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("userId", userId)
                 .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 day
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -39,8 +42,7 @@ public class JwtUtil {
 
     public boolean isTokenValid(String token) {
         try {
-            Claims claims = getClaims(token);
-            return !claims.getExpiration().before(new Date());
+            return !getClaims(token).getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }

@@ -1,4 +1,25 @@
+spring:
+  config:
+    import: optional:file:../.env
+  thymeleaf:
+    cache: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
 cloudinary:
-  cloud_name: den0quhn4
-  api_key: 714977433949123
-  api_secret: fAE7g-_yq_iUmiwZ5qOcaULTMsk
+  cloud_name: ${CLOUDINARY_NAME}
+  api_key: ${CLOUDINARY_API_KEY}
+  api_secret: ${CLOUDINARY_API_SECRET}
+
+jwt:
+  secret: ${JWT_SECRET}
