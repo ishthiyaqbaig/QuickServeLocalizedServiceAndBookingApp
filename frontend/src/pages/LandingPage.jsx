@@ -46,28 +46,6 @@ export default function LandingPage() {
                             Connecting you with trusted local professionals for everything from home repairs to tutoring.
                             Simple, fast, and secure.
                         </p>
-
-                        <div className="glass p-3 rounded-2xl shadow-2xl max-w-3xl mx-auto flex flex-col md:flex-row gap-3">
-                            <div className="flex-[2] relative group">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-600 transition-colors w-5 h-5" />
-                                <input
-                                    type="text"
-                                    placeholder="What service do you need?"
-                                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-gray-50/50 border-none focus:ring-2 focus:ring-indigo-500/50 focus:bg-white transition-all outline-none text-lg"
-                                />
-                            </div>
-                            <div className="flex-1 relative group md:border-l border-gray-200">
-                                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-600 transition-colors w-5 h-5" />
-                                <input
-                                    type="text"
-                                    placeholder="Location"
-                                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-gray-50/50 md:bg-transparent border-none focus:ring-2 focus:ring-indigo-500/50 focus:bg-white transition-all outline-none text-lg"
-                                />
-                            </div>
-                            <Button size="lg" className="md:w-auto w-full shadow-indigo-200">
-                                Search Now
-                            </Button>
-                        </div>
                     </div>
                 </div>
             </div>

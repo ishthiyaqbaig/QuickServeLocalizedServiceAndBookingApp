@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Calendar, Clock, CheckCircle } from 'lucide-react';
 import { Button } from './ui/Button';
 import { createBooking, getCustomerViewAvailability } from '../services/bookingService';
