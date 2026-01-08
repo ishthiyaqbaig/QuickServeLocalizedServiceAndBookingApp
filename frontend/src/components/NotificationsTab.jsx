@@ -31,21 +31,6 @@ const NotificationsTab = ({ userId, setUnreadCount, onNotificationClick }) => {
   return () => clearInterval(interval);
 }, []);
 
-    // const fetchNotifications = async () => {
-    //     setLoading(true);
-    //     try {
-    //         const data = await getUserNotifications(userId);
-    //         const sorted = Array.isArray(data) ? data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : [];
-    //         setNotifications(sorted);
-    //         const unreadCount = sorted.filter(n => !n.isRead).length;
-    //         setUnreadCount(unreadCount);
-    //     } catch (error) {
-    //         console.error("Error fetching notifications:", error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
     const handleMarkAsRead = async (id) => {
         try {
             await markAsRead(id);
