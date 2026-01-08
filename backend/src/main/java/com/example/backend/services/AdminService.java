@@ -63,6 +63,17 @@ public class AdminService {
         return saved;
     }
 
+    public void deleteCategory(Long categoryId) {
+        ServiceCategory category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        categoryRepository.delete(category);
+
+        // Notify all providers
+        String message = "The service category '" + category.getName() + "' has been removed by Admin.";
+        notificationService.notifyAllProviders(message);
+    }
+
     public List<ServiceCategory> getCategories() {
         return categoryRepository.findAll();
     }

@@ -7,6 +7,7 @@ import { Navbar } from '../components/layout/NavBar'
 import { Select } from '../components/ui/Select'
 import { getCategories } from '../services/categoryService'
 import { getListingById, updateListing } from '../services/providerService'
+import { toast } from 'sonner'
 
 export default function UpdateListing() {
     const navigate = useNavigate()
@@ -73,10 +74,11 @@ export default function UpdateListing() {
             if (file) form.append('image', file)
 
             await updateListing(id, form)
+            toast.success("Listing Updated Successfully")
             navigate('/provider/dashboard')
         } catch (error) {
             console.error('Update failed:', error)
-            alert(error.response?.data?.message || 'Failed to update listing')
+            toast.error(error.response?.data?.message || 'Failed to update listing')
         } finally {
             setLoading(false)
         }

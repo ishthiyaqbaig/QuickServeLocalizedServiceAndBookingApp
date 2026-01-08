@@ -6,6 +6,7 @@ import { Input } from "../components/ui/Input";
 import { Select } from "../components/ui/Select";
 import { login } from "../services/authService";
 import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ export default function Login() {
           localStorage.setItem("userId", decoded.userId);
           const userRole = decoded.role || role;
           localStorage.setItem("userRole", userRole);
-
+          toast.success("Login successful!");
           if (userRole === "SERVICE_PROVIDER") {
             navigate("/provider/dashboard");
           } else if (userRole === "ADMIN") {
@@ -63,6 +64,7 @@ export default function Login() {
           error.response?.data?.message ||
             "Login failed. Please check your credentials."
         );
+        
       });
   };
 

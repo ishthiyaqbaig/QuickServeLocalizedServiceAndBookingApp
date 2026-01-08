@@ -10,6 +10,7 @@ import BookingModal from '../components/BookingModal';
 import ReviewModal from '../components/ReviewModal';
 import { Calendar, Search, MapPin, Clock, ArrowRight, Star, CheckCircle, Bell, History } from 'lucide-react';
 import NotificationsTab from '../components/NotificationsTab';
+import { toast } from 'sonner';
 
 const CustomerDashboard = () => {
     const navigate = useNavigate();
@@ -161,7 +162,7 @@ const CustomerDashboard = () => {
                 await customerCancelBooking(bookingId);
                 setMyBookings(prev => prev.map(b => b.bookingId === bookingId ? { ...b, status: 'CANCELLED' } : b));
             } catch (err) {
-                alert("Only PENDING bookings can be cancelled.");
+                toast.error("Only PENDING bookings can be cancelled.");
             }
         }
     };
@@ -170,6 +171,7 @@ const CustomerDashboard = () => {
         await submitReview(bookingId, rating, comment);
         // Refresh this booking's review
         await fetchReviewForBooking(bookingId);
+        toast.success("Review submitted successfully!");
     };
 
     const handleNotificationClick = (targetTab) => {

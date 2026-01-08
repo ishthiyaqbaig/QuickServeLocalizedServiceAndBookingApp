@@ -42,6 +42,11 @@ public class AdminController {
         return ResponseEntity.ok(adminService.createCategory(category, adminId));
     }
 
+    @DeleteMapping("/categories/{categoryId}")
+    public ResponseEntity<?> deleteCategory(@PathVariable Long categoryId) {
+        adminService.deleteCategory(categoryId);
+        return ResponseEntity.ok("Category deleted and providers notified.");
+    }
     @GetMapping("/categories")
     public ResponseEntity<?> categories() {
         return ResponseEntity.ok(adminService.getCategories());

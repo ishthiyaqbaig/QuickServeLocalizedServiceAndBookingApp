@@ -1,6 +1,7 @@
 package com.example.backend.repositories;
 
 import com.example.backend.entity.User;
+import com.example.backend.enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -12,5 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
     List<User> findAll();
+    List<User> findByRole(Role role);
+
 }
 

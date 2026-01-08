@@ -10,6 +10,7 @@ import {
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { register } from "../services/authService";
+import { toast } from "sonner";
 
 export default function SignUp() {
   const navigate = useNavigate();

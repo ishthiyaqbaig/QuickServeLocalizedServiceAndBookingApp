@@ -8,11 +8,8 @@ import {
   Plus,
   Trash2,
   Edit,
-  Search,
-  Filter,
   AlertCircle,
   CheckCircle,
-  X,
   ChevronRight,
   TrendingUp,
   Users,
@@ -21,7 +18,6 @@ import {
 } from "lucide-react";
 import NotificationsTab from "../components/NotificationsTab";
 import { Button } from "../components/ui/Button";
-import { Navbar } from "../components/layout/NavBar";
 import {
   getProviderListings,
   deleteListing,
@@ -36,6 +32,8 @@ import {
   updateProviderAvailability,
 } from "../services/bookingService";
 import { getProviderReviewsByBooking } from "../services/reviewService";
+import { Navbar } from "../components/layout/Navbar";
+import { toast } from "sonner";
 
 const ProviderDashboard = () => {
   const navigate = useNavigate();
@@ -156,9 +154,14 @@ const ProviderDashboard = () => {
   }, [activeTab, userId, selectedDay]);
 
   const handleDeleteListing = async (listingId) => {
-    deleteListing(listingId);
-    const updated = listings.filter(l => l.id !== listingId);
-    setListings(updated);
+    try {
+      deleteListing(listingId);
+      const updated = listings.filter(l => l.id !== listingId);
+      setListings(updated);
+      toast.success("Listing deleted successfully.");
+    } catch (error) {
+      toast.error("Failed to delete listing. Please try again.");
+    }
   };
 
   const handleConfirmBooking = async (bookingId) => {
@@ -169,10 +172,10 @@ const ProviderDashboard = () => {
           b.bookingId === bookingId ? { ...b, status: "CONFIRMED" } : b
         )
       );
-      alert("Booking accepted!");
+      toast.success("Booking accepted!");
     } catch (error) {
       console.error(error);
-      alert("Failed to accept booking.");
+      toast.error("Failed to accept booking.")
     }
   };
 
@@ -184,10 +187,10 @@ const ProviderDashboard = () => {
           b.bookingId === bookingId ? { ...b, status: "COMPLETED" } : b
         )
       );
-      alert("Booking marked as completed!");
+      toast.success("Booking marked as completed!");
     } catch (error) {
       console.error(error);
-      alert("Failed to complete booking.");
+      toast.error("Failed to complete booking.");
     }
   };
 
@@ -203,10 +206,10 @@ const ProviderDashboard = () => {
           b.bookingId === bookingId ? { ...b, status: "CANCELLED" } : b
         )
       );
-      alert("Booking cancelled.");
+      toast.success("Booking cancelled.");
     } catch (error) {
       console.error(error);
-      alert("Failed to cancel booking.");
+      toast.error("Failed to cancel booking.");
     }
   };
 
@@ -565,7 +568,7 @@ const ProviderDashboard = () => {
                               selectedDay,
                               availability
                             );
-                            alert("Availability updated successfully!");
+                            toast.success("Availability updated successfully!");
                           } catch (err) {
                             alert("Failed to update availability");
                             console.error(err);

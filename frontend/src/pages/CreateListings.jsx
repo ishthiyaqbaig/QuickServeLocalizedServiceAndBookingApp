@@ -7,6 +7,7 @@ import { Navbar } from '../components/layout/NavBar'
 import { Select } from '../components/ui/Select'
 import { createListing } from '../services/providerService'
 import { getCategories } from '../services/categoryService'
+import { toast } from 'sonner'
 
 export default function CreateListing() {
     const navigate = useNavigate()
@@ -80,12 +81,12 @@ export default function CreateListing() {
             if (file) form.append('image', file)
 
             await createListing(providerId, form)
-
+            toast.success('Listing created successfully!')
             navigate('/provider/dashboard')
         } catch (error) {
             console.error('Failed to create listing:', error)
             const msg = error.response?.data?.message || 'Failed to create listing'
-            alert(msg)
+            toast.error(msg)
         } finally {
             setLoading(false)
         }

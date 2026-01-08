@@ -4,6 +4,8 @@ import { Wrench, Zap, Home, BookOpen, Truck, Scissors, Check, Upload, MapPin, Do
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
 import { Navbar } from '../components/layout/Navbar'
+import { updateProfile } from '../services/userService'
+import { toast } from 'sonner'
 
 const CATEGORIES = [
     { id: 'plumbing', label: 'Plumbing', icon: Wrench },
@@ -67,9 +69,11 @@ export default function ProfileSetup() {
             .then(() => {
                 console.log('Profile setup successful')
                 localStorage.setItem('providerProfile', JSON.stringify(profileData))
+                toast.success('Profile setup successful!')
                 navigate('/provider/dashboard')
             })
             .catch((error) => {
+                toast.error('Failed to save profile. Please try again.')    
                 console.error('Profile setup failed:', error)
                 setApiError(error.response?.data?.message || 'Failed to save profile. Please try again.')
             })

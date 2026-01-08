@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "../components/layout/NavBar";
 import {
   approveListing,
@@ -9,6 +9,8 @@ import {
   getTopServices,
   getPendingListings,
   getAprovedListings,
+  getCategories,
+  deleteCategory,
 } from "../services/adminService";
 import { Button } from "../components/ui/Button";
 import {
@@ -18,10 +20,11 @@ import {
   ListPlus,
   User as UserIcon,
   Mail,
+  Trash2,
 } from "lucide-react";
 import { Input } from "../components/ui/Input";
 import { jwtDecode } from "jwt-decode";
-import {toast} from "sonner"
+import { toast } from "sonner";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("analytics");
@@ -30,6 +33,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [topCategories, setTopCategories] = useState([]);
   const [topServices, setTopServices] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   // Category Form State
   const [categoryForm, setCategoryForm] = useState({
@@ -54,8 +58,26 @@ export default function AdminDashboard() {
       fetchListings();
     } else if (activeTab === "users") {
       fetchUsers();
+    } else if (activeTab === "categories") {
+      fetchCategories();
     }
   }, [activeTab]);
+
+  const fetchCategories = async () => {
+    const categorie = await getCategories();
+    setCategories(categorie);
+  };
+
+  const handleDeleteCategory = async (categoryId) => {
+    try {
+      // Assuming there's a deleteCategory service function
+      await deleteCategory(categoryId);
+      toast.success("Category deleted successfully");
+      fetchCategories();
+    } catch (error) {
+      toast.error("Failed to delete category");
+    }
+  }
 
   const fetchAnalytics = async () => {
     try {
@@ -102,8 +124,9 @@ export default function AdminDashboard() {
   const handleCreateCategory = async (e) => {
     e.preventDefault();
     try {
-      const id=getAdminId();
-      await createCategory(categoryForm,id);
+      const id = getAdminId();
+      await createCategory(categoryForm, id);
+      fetchCategories();
       toast.success("Category created successfully");
       setCategoryForm({ name: "", description: "" });
     } catch (error) {
@@ -295,34 +318,73 @@ export default function AdminDashboard() {
         )}
 
         {activeTab === "categories" && (
-          <div className="max-w-xl mx-auto bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-              <ListPlus className="text-indigo-600" /> Create Category
-            </h2>
-            <form onSubmit={handleCreateCategory} className="space-y-6">
-              <Input
-                label="Category Name"
-                value={categoryForm.name}
-                onChange={(e) =>
-                  setCategoryForm({ ...categoryForm, name: e.target.value })
-                }
-                placeholder="e.g., Plumbing"
-              />
-              <Input
-                label="Description"
-                value={categoryForm.description}
-                onChange={(e) =>
-                  setCategoryForm({
-                    ...categoryForm,
-                    description: e.target.value,
-                  })
-                }
-                placeholder="Service description..."
-              />
-              <Button type="submit" className="w-full">
-                Create Category
-              </Button>
-            </form>
+          <div className="md:flex gap-20 justify-between">
+            <div className=" md:w-1/2 h-100 mb-2 bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <ListPlus className="text-indigo-600" /> Create Category
+              </h2>
+              <form onSubmit={handleCreateCategory} className="space-y-6">
+                <Input
+                  label="Category Name"
+                  value={categoryForm.name}
+                  onChange={(e) =>
+                    setCategoryForm({ ...categoryForm, name: e.target.value })
+                  }
+                  placeholder="e.g., Plumbing"
+                />
+                <Input
+                  label="Description"
+                  value={categoryForm.description}
+                  onChange={(e) =>
+                    setCategoryForm({
+                      ...categoryForm,
+                      description: e.target.value,
+                    })
+                  }
+                  placeholder="Service description..."
+                />
+                <Button type="submit" className="w-full">
+                  Create Category
+                </Button>
+              </form>
+            </div>
+            <div className="md:w-1/2 bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <ListPlus className="text-indigo-600" /> ALL Category
+              </h2>
+              <div>
+                {categories.length === 0 ? (
+                  <p className="text-center text-gray-500 py-10">
+                    No categories found.
+                  </p>
+                ) : (
+                  categories.map((category) => (
+                    <div
+                      key={category.id}
+                      className="border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all flex flex-col md:flex-row gap-6 mb-4"
+                    >
+                      <div className="flex space-x-4 justify-between w-full">
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900">
+                          {category.name}
+                        </h3>
+                        <p className="text-gray-500 mt-1">
+                          {category.description}
+                        </p>
+                      </div>
+                        
+                        <button
+                        onClick={() => handleDeleteCategory(category.id)}
+                        className="p-3 bg-white/90 backdrop-blur-sm text-rose-600 rounded-xl shadow-lg hover:bg-white transition-colors cursor-pointer"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
         )}
 
@@ -442,3 +504,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+

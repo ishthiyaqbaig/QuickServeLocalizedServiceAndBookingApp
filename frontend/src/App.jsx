@@ -11,9 +11,17 @@ import CustomerProfile from './pages/CustomerProfile';
 import ProviderProfile from './pages/ProviderProfile';
 import AdminProfile from './pages/AdminProfile';
 import UpdateListing from './pages/UpdateListing';
+import { Toaster } from 'sonner';
 
 function App() {
     return (
+        <>
+        <Toaster
+        position="bottom-right"
+        richColors
+        closeButton
+        duration={5000} // Toast auto closes after 1 second
+      />
         <Router>
             <Routes>
                 <Route path="/" element={<LandingPage />} />
@@ -31,6 +39,8 @@ function App() {
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </Router>
+        </>
+        
     );
 }
 

@@ -6,24 +6,45 @@ const NotificationsTab = ({ userId, setUnreadCount, onNotificationClick }) => {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchNotifications();
-    }, [userId]);
+    // useEffect(() => {
+    //     fetchNotifications();
+    // }, [userId]);
 
-    const fetchNotifications = async () => {
-        setLoading(true);
-        try {
-            const data = await getUserNotifications(userId);
-            const sorted = Array.isArray(data) ? data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : [];
+    useEffect(() => {
+  const interval = setInterval(async () => {
+    try {
+      const data = await getUserNotifications(userId);
+      if (Array.isArray(data) && data.length > 0 )  {
+        const sorted = Array.isArray(data) ? data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : [];
             setNotifications(sorted);
             const unreadCount = sorted.filter(n => !n.isRead).length;
             setUnreadCount(unreadCount);
-        } catch (error) {
-            console.error("Error fetching notifications:", error);
-        } finally {
             setLoading(false);
-        }
-    };
+      }else{
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log("Polling failed (server not live yet?)", err.message);
+    }
+  }, 4000);
+
+  return () => clearInterval(interval);
+}, []);
+
+    // const fetchNotifications = async () => {
+    //     setLoading(true);
+    //     try {
+    //         const data = await getUserNotifications(userId);
+    //         const sorted = Array.isArray(data) ? data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : [];
+    //         setNotifications(sorted);
+    //         const unreadCount = sorted.filter(n => !n.isRead).length;
+    //         setUnreadCount(unreadCount);
+    //     } catch (error) {
+    //         console.error("Error fetching notifications:", error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const handleMarkAsRead = async (id) => {
         try {

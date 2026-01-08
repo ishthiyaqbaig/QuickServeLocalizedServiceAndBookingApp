@@ -24,6 +24,7 @@ import {
   updateProfile,
   updateLocation,
 } from "../services/userService";
+import { toast } from "sonner";
 
 const CustomerProfile = () => {
   const navigate = useNavigate();
@@ -124,7 +125,7 @@ const CustomerProfile = () => {
       }
 
       await updateProfile(userId, formData);
-      alert("Profile updated successfully");
+      toast.success("Profile updated successfully");
     } finally {
       setLoadingProfile(false);
     }
@@ -139,7 +140,7 @@ const CustomerProfile = () => {
         permanentLongitude: location.lng || null,
         permanentAddress: location.address,
       });
-      alert("Location updated successfully");
+      toast.success("Location updated successfully");
     } finally {
       setLoadingLocation(false);
     }
