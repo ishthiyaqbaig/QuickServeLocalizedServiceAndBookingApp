@@ -3,10 +3,9 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
-import { Navbar } from "../components/layout/NavBar";
 import { Select } from "../components/ui/Select";
 import { login } from "../services/authService";
-import { MapPin, Mail, Lock, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();

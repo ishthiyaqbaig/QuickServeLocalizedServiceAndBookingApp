@@ -1,17 +1,14 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate, Link } from "react-router-dom";
 import {
   User,
   Briefcase,
   CheckCircle2,
-  MapPin,
-  ArrowRight,
   ArrowLeft,
 } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
-import { Navbar } from "../components/layout/NavBar";
 import { register } from "../services/authService";
 
 export default function SignUp() {
