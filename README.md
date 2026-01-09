@@ -29,7 +29,7 @@ npm run dev
 
 ## 🔧 Backend Setup
 
-Open backend in any IDE (IntelliJ / STS / VS Code) and run:
+Open backend in any IDE (IntelliJ / STS / VS Code) 
 backend/.env  --> for environment variables
 
 set configurtion
@@ -45,8 +45,10 @@ DB_URL=your-db-url
 DB_USERNAME=your-db-name
 DB_PASSWORD=your-password
 
+and run:
+
 ```
-mvn spring-boot:run
+mvn spring-boot:run 
 ```
 
 ---
