@@ -30,6 +30,20 @@ npm run dev
 ## 🔧 Backend Setup
 
 Open backend in any IDE (IntelliJ / STS / VS Code) and run:
+backend/.env  --> for environment variables
+
+set configurtion
+
+CLOUDINARY_NAME=your-cloudinary-name
+
+CLOUDINARY_API_SECRET=your-api-secret
+CLOUDINARY_API_KEY=your-api-key
+
+JWT_SECRET=your-secret-key
+
+DB_URL=your-db-url
+DB_USERNAME=your-db-name
+DB_PASSWORD=your-password
 
 ```
 mvn spring-boot:run
