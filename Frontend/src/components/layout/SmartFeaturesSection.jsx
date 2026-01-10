@@ -1,30 +1,35 @@
 import React, { useState, useEffect } from 'react';
 
+import inOffers from '../../assets/img/in-offers.png';
+import inEvents from '../../assets/img/in-events.png';
+import inTrending from '../../assets/img/in-trending.png';
+import inCommunity from '../../assets/img/in-community.png';
+
 // 1. Feature Data Array (Used for state management)
 const featuresData = [
   {
     title: "Explore Best Offers",
     description: "Helps businesses get discovered by local customers through accurate and optimized listings.",
     icon: '🛍️',
-    image: "../../src/assets/img/in-offers.png", // High-res placeholder
+    image: {inOffers}, // High-res placeholder
   },
   {
     title: "Find Nearby Local Experts",
     description: "Keeps customers informed about deals and promotions from local businesses.",
     icon: '📅',
-    image: "../../src/assets/img/in-events.png", // Placeholder for Events image (like the concert)
+    image: {inEvents}, // Placeholder for Events image (like the concert)
   },
   {
     title: "Trending Offers and Professional",
     description: "Allows users to directly call, chat, or book services through the platform.",
     icon: '🔥',
-    image: "../../src/assets/img/in-trending.png",
+    image: {inTrending},
   },
   {
     title: "Community Engagement",
     description: "Connect with local businesses and like-minded people to share experiences and recommendations.",
     icon: '💬',
-    image: "../../src/assets/img/in-community.png",
+    image: {inCommunity},
   },
 ];
 

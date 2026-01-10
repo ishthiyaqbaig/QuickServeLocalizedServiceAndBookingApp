@@ -1,5 +1,7 @@
 import React from 'react';
 
+import customerStruggleImage from '../../assets/img/customer-struggle.png';
+import businessStruggleImage from '../../assets/img/business-struggle.png';
 // Define the data for the two columns/cards
 const struggleData = {
   customer: {
@@ -75,7 +77,7 @@ const OfflineStruggleSection = () => {
             issues={struggleData.customer.issues}
             icon={struggleData.customer.icon}
             // Placeholder for the image of the woman looking at the phone
-            imageSrc="../../src/assets/img/customer-struggle.png" 
+            imageSrc={customerStruggleImage} 
           />
 
           {/* Card 2: Struggle For Business */}
@@ -84,7 +86,7 @@ const OfflineStruggleSection = () => {
             issues={struggleData.business.issues}
             icon={struggleData.business.icon}
             // Placeholder for the image of the woman with the laptop
-            imageSrc="../../src/assets/img/business-struggle.png" 
+            imageSrc={businessStruggleImage}
           />
         </div>
       </div>
