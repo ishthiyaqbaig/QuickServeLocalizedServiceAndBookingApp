@@ -11,25 +11,25 @@ const featuresData = [
     title: "Explore Best Offers",
     description: "Helps businesses get discovered by local customers through accurate and optimized listings.",
     icon: '🛍️',
-    image: {inOffers}, // High-res placeholder
+    image: inOffers, // ✅ Direct assignment
   },
   {
     title: "Find Nearby Local Experts",
     description: "Keeps customers informed about deals and promotions from local businesses.",
     icon: '📅',
-    image: {inEvents}, // Placeholder for Events image (like the concert)
+    image: inEvents, // ✅ Direct assignment
   },
   {
     title: "Trending Offers and Professional",
     description: "Allows users to directly call, chat, or book services through the platform.",
     icon: '🔥',
-    image: {inTrending},
+    image: inTrending, // ✅ Direct assignment
   },
   {
     title: "Community Engagement",
     description: "Connect with local businesses and like-minded people to share experiences and recommendations.",
     icon: '💬',
-    image: {inCommunity},
+    image: inCommunity, // ✅ Direct assignment
   },
 ];
 
