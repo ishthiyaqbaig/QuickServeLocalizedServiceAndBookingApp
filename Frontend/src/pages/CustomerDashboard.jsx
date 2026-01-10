@@ -58,12 +58,6 @@ const CustomerDashboard = () => {
     navigate("/");
   };
 
-  /**
-   * FULL UPDATED GET LOCATION LOGIC
-   * 1. Checks if browser supports it.
-   * 2. Checks if the user has already "Denied" access via Permissions API.
-   * 3. Prompts the browser's native location dialog.
-   */
   const getLocation = async () => {
     if (!navigator.geolocation) {
       setLocationStatus("Not supported");
@@ -76,12 +70,17 @@ const CustomerDashboard = () => {
     // Check existing permissions to see if we are already blocked
     if (navigator.permissions) {
       try {
-        const result = await navigator.permissions.query({ name: "geolocation" });
+        const result = await navigator.permissions.query({
+          name: "geolocation",
+        });
         if (result.state === "denied") {
           setLocationStatus("Access Blocked");
-          toast.error("Location is blocked. Please enable it in browser settings (click the lock icon in URL bar).", {
-            duration: 5000,
-          });
+          toast.error(
+            "Location is blocked. Please enable it in browser settings (click the lock icon in URL bar).",
+            {
+              duration: 5000,
+            }
+          );
           return;
         }
       } catch (err) {
@@ -91,29 +90,33 @@ const CustomerDashboard = () => {
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-  const lat = pos.coords.latitude;
-  const lng = pos.coords.longitude;
-  
-  setLocation({ lat, lng });
-  
-  // Call the Reverse Geocoding API
-  fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
-    .then(res => res.json())
-    .then(data => {
-      // Extract specific parts like suburb or city
-      const suburb = data.address.suburb || data.address.neighbourhood || "";
-      const city = data.address.city || data.address.town || "Indore";
-      const displayString = suburb ? `${suburb}, ${city}` : city;
-      
-      setAddress(displayString);
-      setLocationStatus(displayString);
-    })
-    .catch(() => {
-      setLocationStatus("Located 📍"); // Still located even if name fails
-    });
-},
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        setLocation({ lat, lng });
+
+        // Call the Reverse Geocoding API
+        fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            // Extract specific parts like suburb or city
+            const suburb =
+              data.address.suburb || data.address.neighbourhood || "";
+            const city = data.address.city || data.address.town || "Indore";
+            const displayString = suburb ? `${suburb}, ${city}` : city;
+
+            setAddress(displayString);
+            setLocationStatus(displayString);
+          })
+          .catch(() => {
+            setLocationStatus("Located 📍"); // Still located even if name fails
+          });
+      },
       (err) => {
-        if (err.code === 1) { // PERMISSION_DENIED
+        if (err.code === 1) {
+          // PERMISSION_DENIED
           setLocationStatus("Access denied");
           toast.error("Please allow location access to find nearby experts.");
         } else {
@@ -205,7 +208,9 @@ const CustomerDashboard = () => {
     if (userId) {
       getBookingsByCustomer(userId)
         .then((bookings) => {
-          const sorted = (bookings || []).sort((a, b) => b.bookingId - a.bookingId);
+          const sorted = (bookings || []).sort(
+            (a, b) => b.bookingId - a.bookingId
+          );
           setMyBookings(sorted);
           fetchReviewsAndCheckPrompt(sorted);
         })
@@ -218,7 +223,9 @@ const CustomerDashboard = () => {
       setLoadingBookings(true);
       getBookingsByCustomer(userId)
         .then((bookings) => {
-          const sorted = (bookings || []).sort((a, b) => b.bookingId - a.bookingId);
+          const sorted = (bookings || []).sort(
+            (a, b) => b.bookingId - a.bookingId
+          );
           setMyBookings(sorted);
           fetchReviewsAndCheckPrompt(sorted);
         })
@@ -350,13 +357,17 @@ const CustomerDashboard = () => {
               </div>
 
               {/* LOCATION PICKER SECTION */}
-              <div 
+              <div
                 className="flex-1 flex items-center gap-3 px-6 h-16 bg-white/40 rounded-2xl border-none cursor-pointer hover:bg-white/60 transition-all group"
                 onClick={getLocation}
               >
                 <MapPin
                   size={22}
-                  className={`${location ? "text-indigo-600" : "text-gray-400 group-hover:text-indigo-500"}`}
+                  className={`${
+                    location
+                      ? "text-indigo-600"
+                      : "text-gray-400 group-hover:text-indigo-500"
+                  }`}
                 />
                 <div className="flex flex-col">
                   <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest">
@@ -395,7 +406,10 @@ const CustomerDashboard = () => {
                 >
                   <div className="h-56 overflow-hidden relative">
                     <img
-                      src={service.images || "https://via.placeholder.com/400x300?text=Service"}
+                      src={
+                        service.images ||
+                        "https://via.placeholder.com/400x300?text=Service"
+                      }
                       alt={service.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
@@ -567,7 +581,9 @@ const CustomerDashboard = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => handleCancelBooking(booking.bookingId)}
+                              onClick={() =>
+                                handleCancelBooking(booking.bookingId)
+                              }
                               className="text-rose-600 border-rose-100 bg-rose-50/30 hover:bg-rose-50 text-xs font-black px-4 h-9"
                             >
                               Cancel Booking
@@ -603,12 +619,17 @@ const CustomerDashboard = () => {
                               ) : (
                                 <Button
                                   onClick={() => {
-                                    setSelectedBookingForReview(booking.bookingId);
+                                    setSelectedBookingForReview(
+                                      booking.bookingId
+                                    );
                                     setReviewModalOpen(true);
                                   }}
                                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg"
                                 >
-                                  <Star size={16} className="mr-2 fill-white/20" />
+                                  <Star
+                                    size={16}
+                                    className="mr-2 fill-white/20"
+                                  />
                                   Write a Review
                                 </Button>
                               )}

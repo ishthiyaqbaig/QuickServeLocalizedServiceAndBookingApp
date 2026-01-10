@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  User,
-  Mail,
-  Phone,
-  Camera,
-  Navigation,
-  ArrowLeft,
-} from "lucide-react";
+import { User, Mail, Phone, Camera, Navigation, ArrowLeft } from "lucide-react";
 
 import { Button } from "../components/ui/Button";
 import {
@@ -17,7 +10,6 @@ import {
   CardTitle,
 } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
-import { Navbar } from "../components/layout/Navbar";
 
 import {
   getUser,
@@ -25,6 +17,7 @@ import {
   updateLocation,
 } from "../services/userService";
 import { toast } from "sonner";
+import { Navbar } from "../components/layout/Navbar";
 
 const CustomerProfile = () => {
   const navigate = useNavigate();
@@ -38,8 +31,8 @@ const CustomerProfile = () => {
     name: "",
     email: "",
     mobile: "",
-    image: null,      // File
-    preview: null,    // Preview URL
+    image: null, // File
+    preview: null, // Preview URL
   });
 
   const [location, setLocation] = useState({
@@ -115,10 +108,7 @@ const CustomerProfile = () => {
       const formData = new FormData();
       formData.append("userName", profile.name);
       formData.append("email", profile.email);
-      formData.append(
-        "number",
-        profile.mobile
-      );
+      formData.append("number", profile.mobile);
 
       if (profile.image) {
         formData.append("image", profile.image); // IMPORTANT
@@ -211,11 +201,7 @@ const CustomerProfile = () => {
                   }
                 />
 
-                <Input
-                  placeholder="Email"
-                  value={profile.email}
-                  disabled
-                />
+                <Input placeholder="Email" value={profile.email} disabled />
 
                 <Input
                   type="tel"
@@ -256,7 +242,11 @@ const CustomerProfile = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <Input placeholder="Latitude" value={location.lat} disabled />
-                  <Input placeholder="Longitude" value={location.lng} disabled />
+                  <Input
+                    placeholder="Longitude"
+                    value={location.lng}
+                    disabled
+                  />
                 </div>
 
                 <Button

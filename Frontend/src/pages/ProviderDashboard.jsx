@@ -32,8 +32,8 @@ import {
   updateProviderAvailability,
 } from "../services/bookingService";
 import { getProviderReviewsByBooking } from "../services/reviewService";
-import { Navbar } from "../components/layout/Navbar";
 import { toast } from "sonner";
+import { Navbar } from "../components/layout/Navbar";
 
 const ProviderDashboard = () => {
   const navigate = useNavigate();

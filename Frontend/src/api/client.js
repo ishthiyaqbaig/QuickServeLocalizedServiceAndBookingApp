@@ -1,7 +1,9 @@
 import axios from 'axios'
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL?import.meta.env.VITE_API_BASE_URL: 'http://localhost:8080/api';
+console.log("API Base URL:", BASE_URL);
 const apiClient = axios.create({
-    baseURL: 'http://localhost:8080/api',  // Spring Boot backend
+   baseURL: `${BASE_URL}/api`,  // Spring Boot backend
 });
 
 //  Add a request interceptor to attach token
@@ -30,10 +32,6 @@ apiClient.interceptors.response.use(
         if (error.response) {
             if (error.response.status === 401) {
                 console.warn("⚠️ Token expired or invalid.");
-
-                // Optional auto-logout:
-                // localStorage.clear();
-                // window.location.href = "/login";
             }
 
             if (error.response.status === 403) {

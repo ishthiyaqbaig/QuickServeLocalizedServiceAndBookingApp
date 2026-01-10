@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
-import { MapPin, User, LogOut } from 'lucide-react';
+import {User, LogOut } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 export const Navbar = ({ showAuthButtons = true, onLogout }) => {
@@ -19,7 +19,6 @@ export const Navbar = ({ showAuthButtons = true, onLogout }) => {
                 <div className="flex justify-between h-16 items-center bg-linear-to-r from-indigo-800 to-purple-300 rounded-2xl px-6">
                     <Link to={logoLink} className="flex items-center gap-3 group transition-transform hover:scale-105">
                         <img src="/quickserve-logo-transparent.png" alt="Quick Serve Logo" className="h-10 w-36 rounded-full" />
-                        {/* <span className="text-2xl font-bold text-gray-900 tracking-tight">Quick Serve</span> */}
                     </Link>
 
                     {userRole ? (

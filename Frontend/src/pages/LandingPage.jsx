@@ -7,7 +7,7 @@ import appScreenshots from "../assets/img/app-screenshots.png";
 import playStore from "../assets/img/google.png";
 import appStore from "../assets/img/Apple.png";
 import services from "../assets/home_services_illustration.png";
-import { Navbar } from '../components/layout/NavBar';
+import { Navbar } from '../components/layout/Navbar';
 import OfflineStruggleSection from '../components/layout/OfflineStruggleSection';
 import SmartFeaturesSection from '../components/layout/SmartFeaturesSection';
 

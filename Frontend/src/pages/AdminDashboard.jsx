@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Navbar } from "../components/layout/NavBar";
+import { Navbar } from "../components/layout/Navbar";
 import {
   approveListing,
   rejectListing,

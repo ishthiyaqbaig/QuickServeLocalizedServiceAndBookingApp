@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  User,
-  Mail,
-  Phone,
-  Camera,
-  Navigation,
-  ArrowLeft,
-} from "lucide-react";
+import { User, Mail, Phone, Camera, Navigation, ArrowLeft } from "lucide-react";
 
 import { Button } from "../components/ui/Button";
 import {
@@ -17,13 +10,10 @@ import {
   CardTitle,
 } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
-import { Navbar } from "../components/layout/Navbar";
 
-import {
-  getUser,
-  updateProfile,
-} from "../services/userService";
+import { getUser, updateProfile } from "../services/userService";
 import { toast } from "sonner";
+import { Navbar } from "../components/layout/Navbar";
 
 const ProviderProfile = () => {
   const navigate = useNavigate();
@@ -35,10 +25,9 @@ const ProviderProfile = () => {
     name: "",
     email: "",
     mobile: "",
-    image: null,      // File
-    preview: null,    // Preview URL
+    image: null, // File
+    preview: null, // Preview URL
   });
-
 
   /* ---------------- FETCH USER ---------------- */
   useEffect(() => {
@@ -72,7 +61,6 @@ const ProviderProfile = () => {
     }));
   };
 
-
   /* ---------------- UPDATE PROFILE ---------------- */
   const handleProfileUpdate = async () => {
     setLoadingProfile(true);
@@ -80,10 +68,7 @@ const ProviderProfile = () => {
       const formData = new FormData();
       formData.append("userName", profile.name);
       formData.append("email", profile.email);
-      formData.append(
-        "number",
-        profile.mobile
-      );
+      formData.append("number", profile.mobile);
 
       if (profile.image) {
         formData.append("image", profile.image); // IMPORTANT
@@ -162,11 +147,7 @@ const ProviderProfile = () => {
                   }
                 />
 
-                <Input
-                  placeholder="Email"
-                  value={profile.email}
-                  disabled
-                />
+                <Input placeholder="Email" value={profile.email} disabled />
 
                 <Input
                   type="tel"
@@ -190,8 +171,6 @@ const ProviderProfile = () => {
                 </Button>
               </CardContent>
             </Card>
-
-        
           </div>
         </div>
       </div>
