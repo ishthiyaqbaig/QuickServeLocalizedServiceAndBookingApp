@@ -3,7 +3,7 @@ FROM maven:3.9.9-eclipse-temurin-17 AS build
 WORKDIR /app
 
 # Copy the Backend folder (case-sensitive!)
-COPY Backend ./backend
+COPY backend ./backend
 
 # Go inside Backend folder
 WORKDIR /app/backend
