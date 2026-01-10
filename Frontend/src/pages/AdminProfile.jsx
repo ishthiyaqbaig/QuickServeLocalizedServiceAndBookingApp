@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Mail, Phone, Camera, Navigation, ArrowLeft } from "lucide-react";
+import { User, Camera, ArrowLeft } from "lucide-react";
 
 import { Button } from "../components/ui/Button";
 import {

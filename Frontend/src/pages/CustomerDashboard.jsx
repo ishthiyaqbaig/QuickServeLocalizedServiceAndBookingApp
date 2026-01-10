@@ -295,7 +295,7 @@ const CustomerDashboard = () => {
         </div>
 
         {/* TABS CONTROLLER */}
-        <div className="flex gap-2 p-1.5 glass rounded-2xl w-fit mb-12 shadow-inner">
+        <div className="sm:flex gap-2 p-1.5 glass rounded-2xl sm:w-fit mb-12 shadow-inner">
           <button
             onClick={() => setActiveTab("search")}
             className={`flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
