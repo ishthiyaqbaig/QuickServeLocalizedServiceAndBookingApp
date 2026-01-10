@@ -61,7 +61,10 @@ export default function SignUp() {
     e.preventDefault();
     setApiError("");
     setLoading(true);
-    if (!validateForm()) return;
+    if (!validateForm()){
+      setLoading(false);
+      return
+    }
 
     const userData = {
       ...formData,

@@ -42,7 +42,10 @@ export default function Login() {
     e.preventDefault();
     setApiError("");
     setLoading(true);
-    if (!validateForm()) return;
+    if (!validateForm()){
+      setLoading(false);
+      return;
+    } 
 
     const loginData = { ...formData, role };
 
