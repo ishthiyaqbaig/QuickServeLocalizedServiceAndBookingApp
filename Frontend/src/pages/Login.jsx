@@ -19,6 +19,7 @@ export default function Login() {
 
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -40,6 +41,7 @@ export default function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setApiError("");
+    setLoading(true);
     if (!validateForm()) return;
 
     const loginData = { ...formData, role };
@@ -140,9 +142,10 @@ export default function Login() {
                 error={errors.password}
               />
             </div>
-
-            <Button type="submit" size="lg" className="w-full">
-              Sign In
+            <Button 
+            disabled={loading}
+            type="submit" size="lg" className="w-full">
+              {loading ? "Sign In..." : "Sign In"}
             </Button>
 
             <div className="text-center text-sm text-gray-500 font-medium">

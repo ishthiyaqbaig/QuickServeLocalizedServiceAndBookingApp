@@ -298,7 +298,7 @@ const CustomerDashboard = () => {
         <div className="sm:flex gap-2 p-1.5 glass rounded-2xl sm:w-fit mb-12 shadow-inner">
           <button
             onClick={() => setActiveTab("search")}
-            className={`flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
+            className={`flex items-center w-full md:w-auto gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
               activeTab === "search"
                 ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
                 : "text-gray-500 hover:text-indigo-600 hover:bg-white/50"
@@ -308,7 +308,7 @@ const CustomerDashboard = () => {
           </button>
           <button
             onClick={() => setActiveTab("bookings")}
-            className={`flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
+            className={`flex items-center w-full md:w-auto gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
               activeTab === "bookings"
                 ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
                 : "text-gray-500 hover:text-indigo-600 hover:bg-white/50"
@@ -318,7 +318,7 @@ const CustomerDashboard = () => {
           </button>
           <button
             onClick={() => setActiveTab("notifications")}
-            className={`flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 relative ${
+            className={`flex items-center w-full md:w-auto gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 relative ${
               activeTab === "notifications"
                 ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
                 : "text-gray-500 hover:text-indigo-600 hover:bg-white/50"

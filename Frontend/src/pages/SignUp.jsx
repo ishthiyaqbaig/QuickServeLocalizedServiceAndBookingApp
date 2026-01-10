@@ -24,6 +24,7 @@ export default function SignUp() {
 
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -59,6 +60,7 @@ export default function SignUp() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setApiError("");
+    setLoading(true);
     if (!validateForm()) return;
 
     const userData = {
@@ -234,8 +236,8 @@ export default function SignUp() {
                 strong password.
               </p>
             </div>
-
             <Button
+            disabled={loading}
               type="submit"
               size="md"
               className="w-full h-10 text-xl shadow-xl shadow-indigo-100"
