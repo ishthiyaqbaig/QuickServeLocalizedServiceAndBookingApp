@@ -46,7 +46,7 @@ const ProviderDashboard = () => {
   const [unreadCount, setUnreadCount] = useState(0);
 
   const userId = localStorage.getItem("userId");
-  const userName = localStorage.getItem("userName") || "Provider";
+  const userName1 = localStorage.getItem("userName") || "Provider";
 
   const handleLogout = () => {
     localStorage.clear();
@@ -71,6 +71,7 @@ const ProviderDashboard = () => {
     "SUNDAY",
   ];
 
+    const userName = localStorage.getItem("userName") || "Provider";
   useEffect(() => {
     if (userId) {
       setLoading(true);
@@ -221,7 +222,7 @@ const ProviderDashboard = () => {
         <div className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
             <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight">
-              Provider <span className="text-gradient">Dashboard</span>
+              Hello, <span className="text-gradient">{userName1}</span>
             </h1>
             <p className="text-gray-500 text-lg font-medium">
               Grow your business and manage your schedule.

@@ -46,6 +46,7 @@ const CustomerProfile = () => {
     const fetchUser = async () => {
       try {
         const data = await getUser(userId);
+        localStorage.setItem("userName", data.userName || "");
         setProfile({
           name: data.userName || "",
           email: data.email || "",
