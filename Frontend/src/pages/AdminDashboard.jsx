@@ -77,7 +77,7 @@ export default function AdminDashboard() {
     } catch (error) {
       toast.error("Failed to delete category");
     }
-  }
+  };
 
   const fetchAnalytics = async () => {
     try {
@@ -364,21 +364,21 @@ export default function AdminDashboard() {
                       className="border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all flex flex-col md:flex-row gap-6 mb-4"
                     >
                       <div className="flex space-x-4 justify-between w-full">
-                      <div>
-                        <h3 className="text-lg font-bold text-gray-900">
-                          {category.name}
-                        </h3>
-                        <p className="text-gray-500 mt-1">
-                          {category.description}
-                        </p>
-                      </div>
-                        
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-900">
+                            {category.name}
+                          </h3>
+                          <p className="text-gray-500 mt-1">
+                            {category.description}
+                          </p>
+                        </div>
+
                         <button
-                        onClick={() => handleDeleteCategory(category.id)}
-                        className="p-3 bg-white/90 backdrop-blur-sm text-rose-600 rounded-xl shadow-lg hover:bg-white transition-colors cursor-pointer"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                          onClick={() => handleDeleteCategory(category.id)}
+                          className="p-3 bg-white/90 backdrop-blur-sm text-rose-600 rounded-xl shadow-lg hover:bg-white transition-colors cursor-pointer"
+                        >
+                          <Trash2 size={18} />
+                        </button>
                       </div>
                     </div>
                   ))
@@ -504,4 +504,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-

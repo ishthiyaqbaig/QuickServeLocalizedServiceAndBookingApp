@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Search, MapPin, Star, ArrowRight, Wrench, Zap, Home, BookOpen, Truck, Scissors, Instagram, Linkedin, Twitter } from 'lucide-react'
+import { MapPin, Star, ArrowRight, Wrench, Zap, Home, BookOpen, Truck, Scissors, Instagram, Linkedin, Twitter } from 'lucide-react'
 import { Button } from '../components/ui/Button'
-import { Input } from '../components/ui/Input'
 import banner from "../assets/hero-banner.png";
 import appScreenshots from "../assets/img/app-screenshots.png";
 import playStore from "../assets/img/google.png";
