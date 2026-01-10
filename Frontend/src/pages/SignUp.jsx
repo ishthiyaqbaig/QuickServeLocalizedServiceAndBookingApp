@@ -85,6 +85,7 @@ export default function SignUp() {
           : navigate("/customer/search");
       })
       .catch((error) => {
+        setLoading(false);
         setApiError(
           error.response?.data?.message ||
             "Registration failed. Please try again."

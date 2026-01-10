@@ -72,6 +72,7 @@ export default function Login() {
         }
       })
       .catch((error) => {
+        setLoading(false);
         setApiError(
           error.response?.data?.message ||
           "Login failed. Please check your credentials."
