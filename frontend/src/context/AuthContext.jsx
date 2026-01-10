@@ -5,10 +5,10 @@ import { useNavigate } from 'react-router-dom';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null); // { token, role }
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    // On app load, read token from localStorage
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         if (token) {
@@ -18,13 +18,14 @@ export const AuthProvider = ({ children }) => {
                     localStorage.removeItem('authToken');
                     setUser(null);
                 } else {
-                    setUser({ token, role: decoded.role }); // assuming JWT has "role"
+                    setUser({ token, role: decoded.role });
                 }
             } catch {
                 localStorage.removeItem('authToken');
                 setUser(null);
             }
         }
+        setLoading(false);
     }, []);
 
     const login = (token) => {
@@ -40,7 +41,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );
