@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "../components/ui/Button";
@@ -34,6 +35,8 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const { login: authLogin } = useAuth(); // Get login function from context
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setApiError("");
@@ -44,12 +47,16 @@ export default function Login() {
     login(loginData)
       .then((data) => {
         if (data.token) {
-          localStorage.setItem("authToken", data.token);
-          const decoded = jwtDecode(data.token);
-          localStorage.setItem("userId", decoded.userId);
-          const userRole = decoded.role || role;
-          localStorage.setItem("userRole", userRole);
+          // Use context login to update global state
+          authLogin(data.token);
+
+          // Extra items used by other parts of the app (legacy support if needed, but Context is better)
+          localStorage.setItem("userId", jwtDecode(data.token).userId);
+          localStorage.setItem("userRole", jwtDecode(data.token).role || role);
+
           toast.success("Login successful!");
+
+          const userRole = jwtDecode(data.token).role || role;
           if (userRole === "SERVICE_PROVIDER") {
             navigate("/provider/dashboard");
           } else if (userRole === "ADMIN") {
@@ -62,9 +69,9 @@ export default function Login() {
       .catch((error) => {
         setApiError(
           error.response?.data?.message ||
-            "Login failed. Please check your credentials."
+          "Login failed. Please check your credentials."
         );
-        
+
       });
   };
 
