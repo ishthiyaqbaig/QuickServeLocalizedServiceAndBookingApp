@@ -39,23 +39,19 @@ public class WebSecurity {
 
         http
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/auth/**","/api/service-categories").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/service-categories").permitAll()
                         .requestMatchers("/api/provider/**").hasRole("SERVICE_PROVIDER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/customer/**").hasRole("CUSTOMER")
-                        .requestMatchers("/api/user/notifications/**").hasAnyRole("ADMIN", "CUSTOMER", "SERVICE_PROVIDER")
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers("/api/user/notifications/**")
+                        .hasAnyRole("ADMIN", "CUSTOMER", "SERVICE_PROVIDER")
+                        .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-//                 Configure SecurityContext to use RequestAttribute repository
-                .securityContext(context ->
-                        context.securityContextRepository(securityContextRepository())
-                );
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Configure SecurityContext to use RequestAttribute repository
+                .securityContext(context -> context.securityContextRepository(securityContextRepository()));
 
         return http.build();
     }
@@ -65,8 +61,7 @@ public class WebSecurity {
     public SecurityContextRepository securityContextRepository() {
         return new DelegatingSecurityContextRepository(
                 new RequestAttributeSecurityContextRepository(),
-                new HttpSessionSecurityContextRepository()
-        );
+                new HttpSessionSecurityContextRepository());
     }
 
     @Bean
