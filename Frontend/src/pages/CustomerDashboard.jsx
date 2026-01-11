@@ -541,9 +541,9 @@ const CustomerDashboard = () => {
                           <p className="text-indigo-600 font-bold text-sm mb-3">
                             with {booking.providerName}
                           </p>
-                          <p className="text-green-600 font-bold text-sm mb-3">
+                          <div className="text-green-600 flex gap-2 font-bold text-sm mb-3 items-center">
                             <FaPhoneAlt /> {booking.number}
-                          </p>
+                          </div>
                           <div className="flex flex-wrap gap-4">
                             <div className="flex items-center gap-2 text-xs font-bold text-gray-500">
                               <Calendar size={14} className="text-indigo-400" />

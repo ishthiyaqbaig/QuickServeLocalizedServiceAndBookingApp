@@ -421,7 +421,7 @@ const ProviderDashboard = () => {
                         <p className="font-black text-gray-900">
                           {booking.customerName}
                         </p>
-                        <div className="flex gap-2 text-xs text-green-600 font-bold justify-center">
+                        <div className="flex gap-2 text-xs text-green-600 font-bold justify-center items-center">
                           <FaPhoneAlt /> {booking.number?booking.number:"Not Provided"}
                         </div>
                       </div>
