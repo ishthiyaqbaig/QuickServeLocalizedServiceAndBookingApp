@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Calendar, Clock, CheckCircle } from 'lucide-react';
 import { Button } from './ui/Button';
 import { createBooking, getCustomerViewAvailability } from '../services/bookingService';
+import { toast } from 'sonner';
 
 const BookingModal = ({ isOpen, onClose, service, userId }) => {
     const [selectedDate, setSelectedDate] = useState('');
@@ -63,7 +64,7 @@ const BookingModal = ({ isOpen, onClose, service, userId }) => {
             }, 2000);
             
         } catch (err) {
-            alert(err.response?.data?.message || "Booking failed. Please try again.");
+            toast.error(err.response?.data?.message || "Booking failed. Please try again.");
         } finally {
             setLoading(false);
         }

@@ -305,7 +305,7 @@ const CustomerDashboard = () => {
                 : "text-gray-500 hover:text-indigo-600 hover:bg-white/50"
             }`}
           >
-            <Search size={18} /> Find Services
+           Find Services
           </button>
           <button
             onClick={() => setActiveTab("bookings")}
@@ -346,8 +346,8 @@ const CustomerDashboard = () => {
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
                 >
-                  <option value="" disabled>
-                    What service are you looking for?
+                  <option value="" disabled className=" text-gray-100">
+                    Click here for services...
                   </option>
                   {categories.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -395,6 +395,9 @@ const CustomerDashboard = () => {
               {services.length === 0 && !loading && (
                 <div className="col-span-full py-20 glass rounded-[2.5rem] text-center border-dashed border-2 border-gray-200">
                   <Search size={48} className="mx-auto text-gray-300 mb-4" />
+                  <p className="text-gray-400 font-bold text-xl">
+                    Service Not Found
+                  </p>
                   <p className="text-gray-400 font-bold text-xl">
                     Search results will appear here
                   </p>

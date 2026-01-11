@@ -2,11 +2,14 @@ import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
 import {User, LogOut } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { useState } from 'react';
 
 export const Navbar = ({ showAuthButtons = true, onLogout }) => {
     const userRole = localStorage.getItem('userRole');
     const logoLink = (userRole === 'PROVIDER' || userRole === 'SERVICE_PROVIDER') ? '/provider/dashboard' : (userRole === 'ADMIN' ? '/admin/dashboard' : (userRole === 'CUSTOMER' ? '/customer/search' : '/'));
     const navigate = useNavigate();
+
+    const [isOpen, setIsOpen] = useState(false);
 
     const logout = () => {
         localStorage.clear();
@@ -29,7 +32,7 @@ export const Navbar = ({ showAuthButtons = true, onLogout }) => {
                                     Profile
                                 </Button>
                             </Link>
-                            <Button variant="outline" size="sm" onClick={logout} className="flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300">
+                            <Button variant="outline" size="sm" onClick={() => setIsOpen(true)} className="flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300">
                                 <LogOut size={18} />
                                 <span className="hidden sm:inline">Logout</span>
                             </Button>
@@ -38,16 +41,52 @@ export const Navbar = ({ showAuthButtons = true, onLogout }) => {
                         showAuthButtons && (
                             <div className="flex items-center gap-1">
                                 <Link to="/login">
-                                    <Button variant="primary" size="sm" className="px-5 text-gray-100">Log In</Button>
+                                    <Button variant="primary" size="sm" className="md:px-5 text-gray-100 text-nowrap">Log In</Button>
                                 </Link>
                                 <Link to="/signup">
-                                    <Button size="sm" className="px-6">Sign Up</Button>
+                                    <Button size="sm" className="md:px-6 text-nowrap">Sign Up</Button>
                                 </Link>
                             </div>
                         )
                     )}
+                 
                 </div>
             </div>
+               {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          
+          {/* 3. Modal Box */}
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 transform transition-all">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              Confirm Logout
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to log out? You will need to enter your password again to access your account.
+            </p>
+
+            {/* 4. Action Buttons */}
+            <div className="flex flex-col gap-3">
+              <button 
+                onClick={() => {
+                  setIsOpen(false);
+                  logout();
+                }
+                }
+                className="w-full py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 active:scale-95 transition"
+              >
+                Yes, Log Me Out
+              </button>
+              
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="w-full py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 active:scale-95 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
         </nav>
     );
 };
