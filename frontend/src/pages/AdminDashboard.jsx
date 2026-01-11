@@ -115,6 +115,7 @@ export default function AdminDashboard() {
       await approveListing(id, getAdminId());
       toast.success("Listing approved");
       fetchListings();
+      fetchPendingListings();
     } catch (error) {
       toast.error("Failed to approve listing");
     }
