@@ -83,40 +83,6 @@ export default function LandingPage() {
 
             <SmartFeaturesSection />
 
-            {/* Download Section */}
-            <div className='py-32 overflow-hidden'>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="glass p-12 md:p-20 rounded-[3rem] relative overflow-hidden">
-                        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
-                        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
-
-                        <div className="grid md:grid-cols-2 gap-16 items-center relative z-10">
-                            <div className="order-2 md:order-1">
-                                <div className="inline-block px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-bold mb-6">MOBILE APP</div>
-                                <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-tight">Find Best Offers <br /><span className="text-gradient">On The Go</span></h2>
-                                <p className="text-lg text-gray-600 mb-10 leading-relaxed">
-                                    Manage your bookings, chat with professionals, and get real-time updates directly from your phone.
-                                    Available now for iOS and Android.
-                                </p>
-                                <div className="flex flex-wrap gap-4">
-                                    <a href="#" className="hover:scale-105 transition-transform duration-300">
-                                        <img src={playStore} alt="Play Store" className="h-14" />
-                                    </a>
-                                    <a href="#" className="hover:scale-105 transition-transform duration-300">
-                                        <img src={appStore} alt="App Store" className="h-14" />
-                                    </a>
-                                </div>
-                            </div>
-                            <div className="order-1 md:order-2 flex justify-center">
-                                <div className="relative">
-                                    <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-3xl scale-110 -z-10" />
-                                    <img src={appScreenshots} alt="App Screenshots" className="max-w-md w-full drop-shadow-2xl" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <OfflineStruggleSection />
 
