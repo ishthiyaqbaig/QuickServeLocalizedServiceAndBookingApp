@@ -42,7 +42,7 @@ public class ListingService {
         listing.setIsApproved(false); // admin must approve
 
         notificationService.sendNotification(
-                1L, // assume ADMIN_ID = 1 for now
+                2L, // assume ADMIN_ID = 1 for now
                 "New listing request received: '" + listing.getTitle() + "' needs approval."
         );
 

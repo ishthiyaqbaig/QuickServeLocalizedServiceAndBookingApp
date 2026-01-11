@@ -163,6 +163,7 @@ public class BookingService {
             res.setProviderId(provider.getId());
             res.setProviderName(provider.getUserName());
             res.setProviderAddress(provider.getPermanentAddress());
+            res.setNumber(provider.getNumber());
 
             return res;
         }).toList();
@@ -192,6 +193,7 @@ public class BookingService {
             res.setCustomerId(customer.getId());
             res.setCustomerName(customer.getUserName());
             res.setCustomerAddress(customer.getPermanentAddress());
+            res.setNumber(customer.getNumber());
 
             return res;
         }).toList();

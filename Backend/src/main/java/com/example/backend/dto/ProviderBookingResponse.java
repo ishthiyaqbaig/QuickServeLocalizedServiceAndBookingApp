@@ -19,4 +19,5 @@ public class ProviderBookingResponse {
     private Long customerId;
     private String customerName;
     private String customerAddress;
+    private Long number;
 }

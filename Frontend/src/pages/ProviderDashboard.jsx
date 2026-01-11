@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaPhoneAlt } from "react-icons/fa";
 import {
   MapPin,
   Calendar,
@@ -420,9 +421,9 @@ const ProviderDashboard = () => {
                         <p className="font-black text-gray-900">
                           {booking.customerName}
                         </p>
-                        <p className="text-xs text-indigo-500 font-bold">
-                          {booking.customerPhone}
-                        </p>
+                        <div className="flex gap-2 text-xs text-green-600 font-bold justify-center">
+                          <FaPhoneAlt /> {booking.number?booking.number:"Not Provided"}
+                        </div>
                       </div>
                       <div className="ml-auto flex flex-col items-end gap-1">
                         <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 bg-white/60 px-3 py-2 rounded-xl border border-white/40">

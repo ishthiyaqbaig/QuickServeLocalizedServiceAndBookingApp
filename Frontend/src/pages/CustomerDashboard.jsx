@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { searchProviders } from "../services/customerService";
 import { getCategories } from "../services/categoryService";
+import { FaPhoneAlt } from "react-icons/fa";
 import {
   getBookingsByCustomer,
   customerCancelBooking,
@@ -539,6 +540,9 @@ const CustomerDashboard = () => {
                           </h3>
                           <p className="text-indigo-600 font-bold text-sm mb-3">
                             with {booking.providerName}
+                          </p>
+                          <p className="text-green-600 font-bold text-sm mb-3">
+                            <FaPhoneAlt /> {booking.number}
                           </p>
                           <div className="flex flex-wrap gap-4">
                             <div className="flex items-center gap-2 text-xs font-bold text-gray-500">

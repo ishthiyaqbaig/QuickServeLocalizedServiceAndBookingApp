@@ -16,7 +16,7 @@ export const Navbar = ({ showAuthButtons = true, onLogout }) => {
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 px-4 py-4">
             <div className="max-w-7xl mx-auto glass rounded-2xl shadow-2xl shadow-indigo-100/20 " >
-                <div className="flex justify-between h-16 items-center bg-linear-to-r from-indigo-800 to-purple-300 rounded-2xl px-6">
+                <div className="flex gap-2 justify-between h-16 items-center bg-linear-to-r from-indigo-800 to-purple-300 rounded-2xl px-6">
                     <Link to={logoLink} className="flex items-center gap-3 group transition-transform hover:scale-105">
                         <img src="/quickserve-logo-transparent.png" alt="Quick Serve Logo" className="h-10 w-36 rounded-full" />
                     </Link>
@@ -36,7 +36,7 @@ export const Navbar = ({ showAuthButtons = true, onLogout }) => {
                         </div>
                     ) : (
                         showAuthButtons && (
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1">
                                 <Link to="/login">
                                     <Button variant="primary" size="sm" className="px-5 text-gray-100">Log In</Button>
                                 </Link>

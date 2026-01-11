@@ -52,7 +52,7 @@ const SmartFeaturesSection = () => {
 
   // --- FIX APPLIED HERE: Simplified the right column layout ---
   return (
-    <div className="py-20 bg-white">
+    <div className="py-20 bg-white ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <h2 className="text-3xl md:text-4xl font-semibold text-center text-gray-800 mb-16">
