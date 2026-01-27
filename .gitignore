@@ -32,7 +32,7 @@ backend/*.jar
 backend/*.war
 
 # Environment variables
-backend/.env
+Backend/.env
 
 ############################
 #  Frontend (React + Vite)
@@ -45,7 +45,7 @@ frontend/node_modules/
 frontend/dist/
 
 # Local environment files
-frontend/.env
+Frontend/.env
 frontend/.env.local
 frontend/.env.*.local
 
