@@ -1,0 +1,57 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import LandingPage from './pages/LandingPage';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import CreateListing from './pages/CreateListings';
+import UpdateListing from './pages/UpdateListing';
+import CustomerDashboard from './pages/CustomerDashboard';
+import ProviderDashboard from './pages/ProviderDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import CustomerProfile from './pages/CustomerProfile';
+import ProviderProfile from './pages/ProviderProfile';
+import AdminProfile from './pages/AdminProfile';
+import { Toaster } from 'sonner';
+
+function App() {
+    return (
+        <Router>
+            <AuthProvider>
+                <Toaster position="bottom-right" richColors closeButton duration={5000} />
+                <Routes>
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<SignUp />} />
+
+                    {/* Customer Routes */}
+                    <Route element={<ProtectedRoute allowedRoles={['CUSTOMER']} />}>
+                        <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+                        <Route path="/customer/search" element={<CustomerDashboard />} />
+                        <Route path="/customer/profile" element={<CustomerProfile />} />
+                    </Route>
+
+                    {/* Provider Routes */}
+                    <Route element={<ProtectedRoute allowedRoles={['SERVICE_PROVIDER']} />}>
+                        <Route path="/provider/dashboard" element={<ProviderDashboard />} />
+                        <Route path="/provider/create-listing" element={<CreateListing />} />
+                        <Route path="/provider/update-listing/:id" element={<UpdateListing />} />
+                        <Route path="/provider/profile" element={<ProviderProfile />} />
+                    </Route>
+
+                    {/* Admin Routes */}
+                    <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+                        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                        <Route path="/admin/profile" element={<AdminProfile />} />
+                    </Route>
+
+                    {/* Catch-all */}
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+            </AuthProvider>
+        </Router>
+    );
+}
+
+export default App;
